@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   // Módulos instalados
   modules: ["@nuxt/content", "@nuxtjs/tailwindcss"],
 
+  // IMPORTANTE: Habilitamos SSR para que las APIs de Upstash funcionen en Vercel
+  ssr: true,
+
   // Configuración de Nuxt Content (Blog)
   content: {
     highlight: {
@@ -43,41 +46,32 @@ export default defineNuxtConfig({
     },
   },
 
-  // Variables de entorno públicas
+  // Variables de entorno
   runtimeConfig: {
+    // Variables privadas (solo disponibles en el servidor/APIs)
+    kvRestApiUrl: process.env.KV_REST_API_URL,
+    kvRestApiToken: process.env.KV_REST_API_TOKEN,
+
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
     },
   },
 
-  // CORRECCIÓN CRUCIAL: Vite y SSR
+  // Vite y correcciones de compatibilidad
   vite: {
     ssr: {
-      // Usamos noExternal para que Vite procese estos paquetes que dan error en Node 18
       noExternal: ["@clack/core", "@clack/prompts"],
     },
   },
 
-  // Configuración de Nitro para el prerenderizado
+  // Optimizamos Nitro para Vercel (quitamos el prerender forzado que congela la página)
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: [
-        "/",
-        "/contacto",
-        "/celebi",
-        "/terminos",
-        "/descargar",
-        "/blog",
-        "/cookies",
-      ],
       failOnError: false,
     },
   },
 
-  // Deshabilitamos SSR para generar una SPA pura (mejor para despliegues sencillos en Netlify)
-  ssr: false,
-
-  // Fecha de compatibilidad requerida por Nuxt 3
+  // Fecha de compatibilidad
   compatibilityDate: "2024-11-01",
 });
