@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables ─────────────────────────────────── */
+:root {
+  --scarlet:  #E8230A;
+  --violet:   #5C1A8F;
+  --violet2:  #7B2FBE;
+  --gold:     #F5C842;
+  --gold2:    #FFE082;
+  --sky:      #5BCEFA;
+  --lime:     #B6E547;
+  --ink:      #0D0A1A;
+  --ink2:     #160E2E;
+  --panel:    #1C1135;
+  --white:    #FAFAFA;
+  --offwhite: #EDE8F5;
+  --muted:    #8B7DAE;
+}
+
+/* ── Base ──────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ink);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Typography helpers ────────────────────────────── */
+.font-display { font-family: 'Syne', sans-serif; }
+.font-mono    { font-family: 'DM Mono', monospace; }
+
+/* ── Buttons ───────────────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply inline-block font-display font-bold text-sm tracking-widest uppercase
+           bg-scarlet text-white px-8 py-3 rounded
+           transition-all duration-200 hover:-translate-y-0.5 hover:brightness-90
+           focus:outline-none focus:ring-2 focus:ring-scarlet focus:ring-offset-2 focus:ring-offset-ink;
+  }
+
+  .btn-gold {
+    @apply inline-block font-display font-bold text-sm tracking-widest uppercase
+           bg-gold text-ink px-8 py-3 rounded
+           transition-all duration-200 hover:-translate-y-0.5 hover:bg-gold2
+           focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-ink;
+  }
+
+  .btn-outline {
+    @apply inline-block font-display font-bold text-sm tracking-widest uppercase
+           bg-transparent border border-white/25 text-offwhite px-8 py-3 rounded
+           transition-all duration-200 hover:border-white/60 hover:bg-white/5
+           focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-ink;
+  }
+
+  /* ── Section helpers ─── */
+  .sec-label {
+    @apply flex items-center gap-3 font-mono text-xs tracking-[0.35em] uppercase text-scarlet mb-2;
+  }
+  .sec-label::before {
+    content: '';
+    @apply block w-7 h-0.5 bg-scarlet;
+  }
+
+  .sec-title {
+    @apply font-display font-extrabold text-white leading-none;
+    font-size: clamp(2.4rem, 5.5vw, 5rem);
+  }
+
+  /* ── Card base ─── */
+  .card-base {
+    @apply bg-panel rounded-xl border border-white/5
+           transition-all duration-200 hover:-translate-y-1 hover:border-white/15;
+  }
+}
+
+/* ── Reveal animation ──────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--violet2); border-radius: 99px; }
