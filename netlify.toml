@@ -2,10 +2,6 @@
   publish = ".output/public"
   command = "npm run generate"
 
-[build.environment]
-  NODE_VERSION = "22" 
-  NPM_FLAGS = "--production=false"
-
 [functions]
   directory = "netlify/functions"
 
