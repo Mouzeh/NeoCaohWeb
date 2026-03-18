@@ -33,7 +33,7 @@ export default defineNuxtConfig({
         // --- NUEVA ETIQUETA DE VERIFICACIÓN ---
         {
           name: "google-site-verification",
-          content: "google-site-verification: google03877f2e5f8e95a2.html",
+          content: "TU_CODIGO_AQUÍ",
         },
         // --------------------------------------
         { property: "og:title", content: "NeoCaoh — Pokémon TCG Simulator" },
