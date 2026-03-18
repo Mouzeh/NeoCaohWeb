@@ -30,6 +30,12 @@ export default defineNuxtConfig({
           content:
             "NeoCaoh es el simulador Pokémon TCG de la comunidad hispana. Gratis, competitivo.",
         },
+        // --- NUEVA ETIQUETA DE VERIFICACIÓN ---
+        {
+          name: "google-site-verification",
+          content: "google-site-verification: google03877f2e5f8e95a2.html",
+        },
+        // --------------------------------------
         { property: "og:title", content: "NeoCaoh — Pokémon TCG Simulator" },
         {
           property: "og:description",
@@ -48,7 +54,6 @@ export default defineNuxtConfig({
 
   // Variables de entorno
   runtimeConfig: {
-    // Variables privadas (solo disponibles en el servidor/APIs)
     kvRestApiUrl: process.env.KV_REST_API_URL,
     kvRestApiToken: process.env.KV_REST_API_TOKEN,
 
@@ -64,7 +69,7 @@ export default defineNuxtConfig({
     },
   },
 
-  // Optimizamos Nitro para Vercel (quitamos el prerender forzado que congela la página)
+  // Optimizamos Nitro para Vercel
   nitro: {
     prerender: {
       crawlLinks: true,
