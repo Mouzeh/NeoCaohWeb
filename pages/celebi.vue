@@ -4,6 +4,7 @@ definePageMeta({
 });
 
 const isAuthenticated = ref(false);
+const adminPass = ref(""); // Guardamos la clave en memoria temporalmente
 const loginForm = ref({
   username: "",
   password: "",
@@ -34,7 +35,7 @@ const newPost = ref({
 
 const activeTab = ref("downloads");
 
-// --- Funciones Conectadas a la API (Vercel KV) ---
+// --- Funciones Conectadas a la API ---
 
 const loadDownloads = async () => {
   try {
@@ -61,12 +62,13 @@ const saveDownloads = async () => {
   try {
     await $fetch("/api/downloads", {
       method: "POST",
+      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
       body: adminData.value.downloads,
     });
     alert("Enlaces de descarga guardados en la nube correctamente");
   } catch (error) {
     console.error("Error saving downloads:", error);
-    alert("Error al guardar los enlaces");
+    alert("Error al guardar: Acceso denegado o contraseña incorrecta");
   } finally {
     loading.value = false;
   }
@@ -76,7 +78,6 @@ const loadBlogPosts = async () => {
   try {
     const saved = await $fetch("/api/blog");
     if (saved && saved.length > 0) {
-      // Formatear las fechas al cargar desde la base de datos
       blogPosts.value = saved.map((post) => ({
         ...post,
         publishedAt: new Date(post.publishedAt),
@@ -98,7 +99,7 @@ const createPost = async () => {
   loading.value = true;
   try {
     const post = {
-      id: Date.now(), // Usar Date.now() para un ID más seguro
+      id: Date.now(),
       title: newPost.value.title,
       slug: newPost.value.title
         .toLowerCase()
@@ -108,8 +109,8 @@ const createPost = async () => {
         newPost.value.excerpt ||
         newPost.value.content.substring(0, 150) + "...",
       content: newPost.value.content,
-      author: "Mouzeh",
-      publishedAt: new Date().toISOString(), // Guardar la fecha como string para Redis
+      author: loginForm.value.username || "Admin",
+      publishedAt: new Date().toISOString(),
       featured: newPost.value.featured,
       tags: newPost.value.tags
         .split(",")
@@ -118,23 +119,26 @@ const createPost = async () => {
     };
 
     // Agregar al arreglo local
-    blogPosts.value.unshift({
-      ...post,
-      publishedAt: new Date(post.publishedAt), // Mantenerlo como Date para el template
-    });
+    const updatedPosts = [
+      { ...post, publishedAt: new Date(post.publishedAt) },
+      ...blogPosts.value,
+    ];
 
-    // Guardar todo el arreglo en Vercel KV
-    const dataToSave = blogPosts.value.map((p) => ({
+    // Formatear para guardar
+    const dataToSave = updatedPosts.map((p) => ({
       ...p,
       publishedAt: p.publishedAt.toISOString(),
     }));
 
     await $fetch("/api/blog", {
       method: "POST",
+      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
       body: dataToSave,
     });
 
-    // Limpiar formulario
+    // Si la API no falló (no dio error 401), actualizamos la vista
+    blogPosts.value = updatedPosts;
+
     newPost.value = {
       title: "",
       content: "",
@@ -142,11 +146,10 @@ const createPost = async () => {
       tags: "",
       featured: false,
     };
-
     alert("Post creado y guardado en la nube correctamente");
   } catch (error) {
     console.error("Error creating post:", error);
-    alert("Error al crear el post");
+    alert("Error al crear el post: Acceso denegado o contraseña incorrecta");
   } finally {
     loading.value = false;
   }
@@ -161,48 +164,45 @@ const deletePost = async (id) => {
 
   loading.value = true;
   try {
-    // Eliminar del arreglo local
-    blogPosts.value = blogPosts.value.filter((post) => post.id !== id);
-
-    // Guardar el nuevo arreglo (sin el post) en Vercel KV
-    const dataToSave = blogPosts.value.map((p) => ({
+    // Simulamos el nuevo arreglo
+    const updatedPosts = blogPosts.value.filter((post) => post.id !== id);
+    const dataToSave = updatedPosts.map((p) => ({
       ...p,
       publishedAt: p.publishedAt.toISOString(),
     }));
 
     await $fetch("/api/blog", {
       method: "POST",
+      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
       body: dataToSave,
     });
 
+    // Si la API no falló, actualizamos la vista
+    blogPosts.value = updatedPosts;
     alert("Post eliminado de la nube correctamente");
   } catch (error) {
     console.error("Error deleting post:", error);
-    alert("Error al eliminar el post");
+    alert("Error al eliminar el post: Acceso denegado o contraseña incorrecta");
   } finally {
     loading.value = false;
   }
 };
 
-// Login function
+// Login function refactorizada
 const login = async () => {
   loading.value = true;
   try {
-    if (
-      loginForm.value.username === "Mouzeh" &&
-      loginForm.value.password === "$Rudy1997"
-    ) {
-      isAuthenticated.value = true;
-      loginError.value = "";
+    // Guardamos la clave y el usuario ingresado
+    adminPass.value = loginForm.value.password;
 
-      // Cargar datos reales desde Vercel KV después de iniciar sesión
-      await Promise.all([loadDownloads(), loadBlogPosts()]);
-    } else {
-      loginError.value = "Credenciales incorrectas";
-      setTimeout(() => {
-        loginError.value = "";
-      }, 3000);
-    }
+    // Dejamos pasar a la interfaz
+    isAuthenticated.value = true;
+    loginError.value = "";
+
+    // Cargamos los datos públicos
+    await Promise.all([loadDownloads(), loadBlogPosts()]);
+  } catch (e) {
+    loginError.value = "Error al cargar los datos";
   } finally {
     loading.value = false;
   }
@@ -210,6 +210,7 @@ const login = async () => {
 
 const logout = () => {
   isAuthenticated.value = false;
+  adminPass.value = ""; // Borramos la clave de la memoria
   loginForm.value = { username: "", password: "" };
   adminData.value.downloads = { windows: "", mac: "", linux: "", version: "" };
   blogPosts.value = [];
@@ -470,14 +471,7 @@ const logout = () => {
                     class="w-full px-4 py-3 bg-ink/50 border border-white/10 rounded-lg text-white placeholder-muted focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all resize-none"
                     placeholder="# Título del post
 
-Tu contenido aquí en formato Markdown...
-
-## Subsección
-
-- Lista
-- De items
-
-**Texto en negrita** y *cursiva*"
+Tu contenido aquí en formato Markdown..."
                   ></textarea>
                 </div>
 
@@ -551,9 +545,8 @@ Tu contenido aquí en formato Markdown...
                           v-for="tag in post.tags"
                           :key="tag"
                           class="bg-violet2/20 text-violet2 text-xs px-2 py-1 rounded"
+                          >{{ tag }}</span
                         >
-                          {{ tag }}
-                        </span>
                       </div>
                     </div>
                     <button
