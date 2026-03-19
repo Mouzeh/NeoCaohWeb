@@ -44,12 +44,10 @@ const loadDownloads = async () => {
       adminData.value.downloads = saved;
     } else {
       adminData.value.downloads = {
-        windows:
-          "https://www.mediafire.com/file/rvhehqy4azo2h1h/NeoTCG-windows-Alpha+-+v0.11.1..zip/file",
-        mac: "https://www.mediafire.com/file/z0jqyb42zary7a1/NEOTCG-macos-v011.1.zip/file",
-        linux:
-          "https://www.mediafire.com/file/rvhehqy4azo2h1h/NeoTCG-windows-Alpha+-+v0.11.1..zip/file",
-        version: "v0.11.1 Alpha ~250 MB",
+        windows: "",
+        mac: "",
+        linux: "",
+        version: "",
       };
     }
   } catch (error) {
@@ -62,7 +60,7 @@ const saveDownloads = async () => {
   try {
     await $fetch("/api/downloads", {
       method: "POST",
-      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
+      headers: { "x-admin-pass": adminPass.value }, // Enviamos la clave secreta
       body: adminData.value.downloads,
     });
     alert("Enlaces de descarga guardados en la nube correctamente");
@@ -118,13 +116,11 @@ const createPost = async () => {
         .filter((tag) => tag),
     };
 
-    // Agregar al arreglo local
     const updatedPosts = [
       { ...post, publishedAt: new Date(post.publishedAt) },
       ...blogPosts.value,
     ];
 
-    // Formatear para guardar
     const dataToSave = updatedPosts.map((p) => ({
       ...p,
       publishedAt: p.publishedAt.toISOString(),
@@ -132,13 +128,11 @@ const createPost = async () => {
 
     await $fetch("/api/blog", {
       method: "POST",
-      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
+      headers: { "x-admin-pass": adminPass.value }, // Enviamos la clave secreta
       body: dataToSave,
     });
 
-    // Si la API no falló (no dio error 401), actualizamos la vista
     blogPosts.value = updatedPosts;
-
     newPost.value = {
       title: "",
       content: "",
@@ -164,7 +158,6 @@ const deletePost = async (id) => {
 
   loading.value = true;
   try {
-    // Simulamos el nuevo arreglo
     const updatedPosts = blogPosts.value.filter((post) => post.id !== id);
     const dataToSave = updatedPosts.map((p) => ({
       ...p,
@@ -173,11 +166,10 @@ const deletePost = async (id) => {
 
     await $fetch("/api/blog", {
       method: "POST",
-      headers: { "x-admin-pass": adminPass.value }, // <-- Enviamos la clave secreta
+      headers: { "x-admin-pass": adminPass.value }, // Enviamos la clave secreta
       body: dataToSave,
     });
 
-    // Si la API no falló, actualizamos la vista
     blogPosts.value = updatedPosts;
     alert("Post eliminado de la nube correctamente");
   } catch (error) {
@@ -188,21 +180,31 @@ const deletePost = async (id) => {
   }
 };
 
-// Login function refactorizada
+// Login function con validación en el servidor
 const login = async () => {
   loading.value = true;
+  loginError.value = "";
+
   try {
-    // Guardamos la clave y el usuario ingresado
+    // 1. Verificamos la clave con el backend ANTES de entrar
+    await $fetch("/api/verify", {
+      method: "POST",
+      headers: { "x-admin-pass": loginForm.value.password },
+    });
+
+    // 2. Si es correcta, guardamos la clave en memoria y mostramos el panel
     adminPass.value = loginForm.value.password;
-
-    // Dejamos pasar a la interfaz
     isAuthenticated.value = true;
-    loginError.value = "";
 
-    // Cargamos los datos públicos
+    // 3. Cargamos los datos reales
     await Promise.all([loadDownloads(), loadBlogPosts()]);
   } catch (e) {
-    loginError.value = "Error al cargar los datos";
+    // Si la clave es mala, mostramos error y no dejamos entrar
+    loginError.value = "Credenciales incorrectas";
+    adminPass.value = "";
+    setTimeout(() => {
+      loginError.value = "";
+    }, 3000);
   } finally {
     loading.value = false;
   }
@@ -210,7 +212,7 @@ const login = async () => {
 
 const logout = () => {
   isAuthenticated.value = false;
-  adminPass.value = ""; // Borramos la clave de la memoria
+  adminPass.value = ""; // Borramos la clave al salir
   loginForm.value = { username: "", password: "" };
   adminData.value.downloads = { windows: "", mac: "", linux: "", version: "" };
   blogPosts.value = [];
