@@ -78,14 +78,9 @@ function onScroll() {
       0,
       Math.min(1, (window.scrollY - el.offsetTop) / max),
     );
-
-    // Suavizar la fracción con easing para movimiento más fluido
-    const frac = rawFrac * rawFrac * (3 - 2 * rawFrac); // smoothstep
-
-    // Interpolación más suave entre frames
+    const frac = rawFrac * rawFrac * (3 - 2 * rawFrac);
     const targetFrame = frac * (frameCount.value - 1);
     const frameIndex = Math.min(frameCount.value - 1, Math.floor(targetFrame));
-
     drawFrame(frameIndex);
     tickPending = false;
   });
@@ -164,7 +159,7 @@ function onScroll() {
         </svg>
       </div>
 
-      <!-- ── Canvas: pegado a la derecha, 92vw de ancho para imagen mucho más grande ── -->
+      <!-- Canvas -->
       <div
         class="absolute top-0 right-0 h-full flex items-center justify-center"
         style="width: 92vw"
@@ -180,7 +175,7 @@ function onScroll() {
         />
       </div>
 
-      <!-- Gradiente izquierda para separar texto del canvas -->
+      <!-- Gradiente izquierda -->
       <div
         class="absolute inset-0 pointer-events-none z-10"
         style="
@@ -194,7 +189,7 @@ function onScroll() {
         "
       />
 
-      <!-- ── Texto hero — columna izquierda ── -->
+      <!-- Texto hero -->
       <div
         class="absolute inset-y-0 left-0 z-20 flex flex-col justify-center pointer-events-none"
         style="width: 35%; padding-left: 4vw; padding-right: 1vw"
@@ -223,18 +218,35 @@ function onScroll() {
             max-width: 360px;
           "
         >
-          Construye tu mazo, desafía al mundo. NeoCaoh es el simulador Pokémon
-          TCG de la comunidad hispana — gratis y competitivo.
+          Construye tu mazo, desafía a entrenadores de todo el mundo. NeoCaoh es
+          el simulador Pokémon TCG de la comunidad hispana — gratis y
+          competitivo.
         </p>
 
+        <!-- Badge navegador -->
         <div
-          class="flex gap-3 mt-8 flex-wrap pointer-events-auto hero-anim"
+          class="flex items-center gap-2 mt-4 mb-1 hero-anim"
+          style="--d: 1.55s"
+        >
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <span
+            class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-green-400"
+          >
+            Disponible en navegador · Sin descarga
+          </span>
+        </div>
+
+        <!-- Botones -->
+        <div
+          class="flex gap-3 mt-4 flex-wrap pointer-events-auto hero-anim"
           style="--d: 1.8s"
         >
-          <NuxtLink to="/descargar" class="btn-primary"
-            >▶ Descargar Ahora</NuxtLink
+          <NuxtLink to="/play" class="btn-primary"
+            >▶ Jugar en Navegador</NuxtLink
           >
-          <NuxtLink to="#features" class="btn-outline">Ver Features</NuxtLink>
+          <NuxtLink to="/descargar" class="btn-outline">
+            <span class="opacity-60 text-[0.7em] mr-1">↓</span> Descargar
+          </NuxtLink>
         </div>
       </div>
 
