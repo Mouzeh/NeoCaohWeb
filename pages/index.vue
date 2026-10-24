@@ -35,6 +35,7 @@ const onLoaderComplete = () => {
       <HomeStatsStrip />
       <HomeFeaturesGrid />
       <HomeStorySection />
+      <HomeCardsTeaser />
       <HomeCtaSection />
     </div>
   </div>

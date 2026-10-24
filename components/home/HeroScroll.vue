@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import gsap from "gsap";
+
 const scrollContainer = ref<HTMLElement | null>(null);
 const loaderVisible = ref(true);
 const loadProgress = ref(0);
@@ -6,8 +8,8 @@ const loadProgress = ref(0);
 const { canvasRef, init } = useScrollFrames({
   startFrame: 77,
   endFrame: 192,
-  videoWidth: 1920,
-  videoHeight: 1080,
+  videoWidth: 1280,
+  videoHeight: 720,
   scrollContainer,
   framePath: (n) => `/frames/png/frame_${n}.png`,
   onProgress: (pct) => {
@@ -18,161 +20,215 @@ const { canvasRef, init } = useScrollFrames({
   },
 });
 
+const titleLines = ["Un nuevo", "Comienzo"];
+const sparkles = [
+  { x: "47%", y: "18%", s: 46 },
+  { x: "58%", y: "34%", s: 22 },
+  { x: "88%", y: "16%", s: 30 },
+  { x: "72%", y: "72%", s: 18 },
+  { x: "12%", y: "86%", s: 16 },
+];
+
 onMounted(() => init());
+
+useGsap((mm) => {
+  mm.add(MOTION_OK, () => {
+    // Entrada
+    gsap
+      .timeline({ delay: 0.3 })
+      .from(".hero-aqua", {
+        clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
+        duration: 1.1,
+        ease: "power4.inOut",
+      })
+      .from(
+        ".hero-indigo",
+        {
+          clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
+          duration: 1.1,
+          ease: "power4.inOut",
+        },
+        "<0.08",
+      )
+      .from(
+        ".hero-line > span",
+        { yPercent: 110, duration: 0.9, stagger: 0.09, ease: "power4.out" },
+        "-=0.45",
+      )
+      .from(
+        ".hero-fade",
+        { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" },
+        "-=0.5",
+      )
+      .from(
+        ".hero-sparkle",
+        {
+          scale: 0,
+          rotate: -90,
+          duration: 0.8,
+          stagger: 0.07,
+          ease: "back.out(2)",
+        },
+        "-=0.8",
+      );
+
+    gsap.to(".hero-sparkle", {
+      scale: 0.6,
+      opacity: 0.5,
+      rotate: 45,
+      duration: 1.6,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+      stagger: { each: 0.35, from: "random" },
+      delay: 2,
+    });
+
+    // Scroll: el texto se aleja y el panel índigo se repliega
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: scrollContainer.value,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.8,
+        },
+      })
+      .to(".hero-copy", { yPercent: -18, autoAlpha: 0, ease: "power1.in" }, 0.35)
+      .to(".hero-ghost", { xPercent: -30, ease: "none" }, 0);
+  });
+
+  mm.add(`(min-width: 768px) and ${MOTION_OK}`, () => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: scrollContainer.value,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.8,
+        },
+      })
+      // Los paneles se deslizan juntos hacia la izquierda (transform, no clip-path)
+      .to(".hero-panels", { xPercent: -42, ease: "none" }, 0.35)
+      .to(".hero-canvas-wrap", { xPercent: -22, scale: 1.08, ease: "none" }, 0.35);
+  });
+}, scrollContainer);
 </script>
 
 <template>
   <Transition name="fade">
     <div
       v-if="loaderVisible"
-      class="fixed inset-0 z-[900] bg-ink flex flex-col items-center justify-center gap-7"
+      class="fixed inset-0 z-[900] bg-indigo flex flex-col items-center justify-center gap-6"
     >
-      <div
-        class="loader-ring w-16 h-16 rounded-full border-[3px] border-white/[0.08] border-t-gold border-r-scarlet"
-      />
-      <p
-        class="font-display font-extrabold text-[3rem] tracking-[0.06em] text-white"
-      >
-        Neo<span class="text-scarlet">Caoh</span>
+      <span class="sparkle w-12 h-12 bg-aqua animate-spin [animation-duration:2.4s]" />
+      <p class="font-display font-black italic text-[3.2rem] tracking-[0.02em] text-white">
+        NEO<span class="text-aqua">CAOH</span>
       </p>
-      <div class="w-60 h-[3px] bg-white/[0.07] rounded-full overflow-hidden">
+      <div class="w-56 h-[3px] bg-white/15 rounded-full overflow-hidden">
         <div
-          class="h-full bg-gold rounded-full transition-[width] duration-100"
+          class="h-full bg-aqua rounded-full transition-[width] duration-100"
           :style="{ width: loadProgress + '%' }"
         />
       </div>
-      <p class="font-mono text-[0.7rem] tracking-[0.2em] text-muted">
+      <p class="font-mono text-[0.7rem] tracking-[0.3em] text-white/60">
         {{ loadProgress }}%
       </p>
     </div>
   </Transition>
 
-  <div
-    ref="scrollContainer"
-    class="scroll-container relative"
-    style="height: 300vh; background: var(--ink2)"
-  >
-    <div
-      class="sticky top-0 h-screen overflow-hidden flex items-center justify-end pr-0"
-    >
-      <div
-        class="orb orb-1 absolute rounded-full"
-        style="
-          width: 560px;
-          height: 560px;
-          background: rgba(92, 26, 143, 0.5);
-          bottom: -80px;
-          left: -80px;
-          filter: blur(90px);
-        "
-      />
-      <div
-        class="orb orb-2 absolute rounded-full"
-        style="
-          width: 480px;
-          height: 480px;
-          background: rgba(232, 35, 10, 0.3);
-          top: -60px;
-          right: -60px;
-          filter: blur(90px);
-        "
-      />
-      <div
-        class="orb orb-3 absolute rounded-full"
-        style="
-          width: 360px;
-          height: 360px;
-          background: rgba(245, 200, 66, 0.15);
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          filter: blur(90px);
-        "
-      />
-
-      <div
-        class="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.05]"
+  <div ref="scrollContainer" class="relative bg-white" style="height: 300vh">
+    <div class="sticky top-0 h-[100svh] overflow-hidden">
+      <!-- Texto fantasma -->
+      <span
+        class="hero-ghost absolute bottom-[-4vw] left-[30%] font-display font-black italic text-[22vw] leading-none text-paper whitespace-nowrap select-none pointer-events-none"
+        aria-hidden="true"
+        >NEO TCG</span
       >
-        <svg
-          viewBox="0 0 1280 720"
-          preserveAspectRatio="xMidYMid slice"
-          class="w-full h-full"
-        >
-          <defs>
-            <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="white" stop-opacity="0" />
-              <stop offset="50%" stop-color="white" stop-opacity="1" />
-              <stop offset="100%" stop-color="white" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <g stroke="url(#lg)" stroke-width="1" fill="none">
-            <line x1="0" y1="80" x2="1280" y2="640" />
-            <line x1="0" y1="200" x2="1280" y2="520" />
-            <line x1="0" y1="340" x2="1280" y2="380" />
-            <line x1="0" y1="460" x2="1280" y2="260" />
-            <line x1="0" y1="580" x2="1280" y2="140" />
-            <line x1="160" y1="0" x2="1120" y2="720" />
-            <line x1="380" y1="0" x2="1280" y2="720" />
-            <line x1="0" y1="0" x2="900" y2="720" />
-          </g>
-        </svg>
+
+      <!-- Secuencia de frames -->
+      <div
+        class="hero-canvas-wrap absolute inset-0 flex items-end md:items-center justify-center md:justify-end md:pr-[2vw] pb-[2vh] md:pb-0"
+      >
+        <canvas
+          ref="canvasRef"
+          class="hero-canvas block w-[115%] max-w-none md:w-[68vw] md:max-w-[1100px] h-auto mix-blend-multiply"
+        />
       </div>
 
-      <canvas
-        ref="canvasRef"
-        class="relative z-[2] object-contain canvas-glow block w-[70%] max-w-[600px] h-auto md:w-[85%] md:max-w-[800px] opacity-80 md:opacity-100 hero-canvas"
+      <!-- Paneles diagonales -->
+      <div class="hero-panels absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="hero-aqua absolute inset-0 bg-aqua" />
+      <div class="hero-indigo absolute inset-0 bg-indigo overflow-hidden">
+        <span class="stripes absolute -left-10 bottom-0 w-[38%] h-[40%] text-white/[0.06]" />
+        <span
+          class="absolute w-0 h-0 border-y-[18px] border-y-transparent border-l-[30px] border-l-aqua/80 left-[40%] top-[62%] rotate-12 hidden md:block"
+        />
+        <span
+          class="absolute w-0 h-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-white/40 left-[8%] top-[20%] -rotate-12"
+        />
+      </div>
+      </div>
+
+      <!-- Destellos -->
+      <span
+        v-for="(s, i) in sparkles"
+        :key="i"
+        class="hero-sparkle sparkle absolute bg-aqua pointer-events-none"
+        :style="{ left: s.x, top: s.y, width: s.s + 'px', height: s.s + 'px' }"
+        aria-hidden="true"
       />
 
+      <!-- Copy -->
       <div
-        class="absolute inset-0 z-[5] flex flex-col justify-center px-[7vw] md:px-[7vw] px-[5vw] pointer-events-none"
+        class="hero-copy relative z-[5] h-full flex flex-col justify-start md:justify-center pt-28 md:pt-24 px-6 md:pl-[8vw] md:pr-0 md:max-w-[52vw]"
       >
-        <div
-          class="hero-eyebrow font-mono text-[0.68rem] md:text-[0.68rem] text-[0.6rem] tracking-[0.3em] uppercase text-gold flex items-center gap-3 mb-5 md:mb-5 mb-3"
-        >
-          <span
-            class="w-1.5 h-1.5 rounded-full bg-gold animate-[blink_1.5s_ease_infinite]"
-          />
-          Simulador TCG · Pokémon · Online
-        </div>
+        <p class="hero-fade eyebrow-wide text-white/70 mb-6">
+          Simulador · Pokémon · TCG
+        </p>
         <h1
-          class="hero-title font-display font-extrabold leading-[0.88] tracking-tight relative"
+          class="font-display font-black italic uppercase text-white leading-[0.86] tracking-[-0.01em]"
+          style="font-size: clamp(3.6rem, min(9.5vw, 15vh), 9.5rem)"
         >
           <span
-            class="block text-white title-glow-white"
-            style="font-size: clamp(2.2rem, 8.5vw, 7.5rem)"
-            >Un Nuevo</span
+            v-for="(line, i) in titleLines"
+            :key="line"
+            class="hero-line block overflow-hidden pr-[0.08em]"
+            :class="i === 1 ? 'text-aqua' : ''"
           >
-          <span
-            class="block text-scarlet title-glow-scarlet relative"
-            style="font-size: clamp(2.2rem, 8.5vw, 7.5rem)"
-            >Comienzo<span class="title-dot">.</span></span
-          >
+            <span class="block">{{ line }}</span>
+          </span>
         </h1>
         <p
-          class="hero-desc font-body font-light text-offwhite/70 max-w-[400px] md:max-w-[400px] max-w-[320px] leading-relaxed mt-6 md:mt-6 mt-4"
-          style="font-size: clamp(0.85rem, 1.5vw, 1.1rem)"
+          class="hero-fade self-start mt-5 -ml-1 bg-night text-white font-display font-bold italic uppercase text-base md:text-lg tracking-[0.12em] px-5 py-1.5 -skew-x-12"
         >
-          Construye tu mazo, desafía a entrenadores de todo el mundo. Neo TCG es
-          el simulador Pokemon TCG de la comunidad hispana.
+          <span class="block skew-x-12">El simulador de la comunidad hispana</span>
         </p>
-        <div class="hero-actions flex gap-4 md:gap-4 gap-3 mt-8 md:mt-8 mt-6 flex-wrap md:flex-nowrap flex-wrap pointer-events-auto">
-          <NuxtLink to="/descargar" class="btn-primary md:text-base text-sm">▶ Jugar Ahora</NuxtLink>
-          <NuxtLink to="#features" class="btn-outline md:text-base text-sm"
-            >Descubre NEO TCG</NuxtLink
-          >
+        <ul
+          class="hero-fade mt-5 space-y-1.5 font-display font-semibold text-[0.8rem] tracking-[0.22em] uppercase text-white/75 list-none"
+        >
+          <li>Construye tu mazo</li>
+          <li>Desafía a entrenadores de todo el mundo</li>
+          <li>Gratis, para siempre</li>
+        </ul>
+        <div class="hero-fade flex flex-wrap gap-3 mt-9">
+          <NuxtLink to="/play" class="btn-primary">▶ Jugar ahora</NuxtLink>
+          <NuxtLink to="/cartas" class="btn-outline">Ver cartas</NuxtLink>
         </div>
       </div>
 
+      <!-- Indicador de scroll -->
       <div
-        class="absolute right-12 md:right-12 right-6 bottom-12 md:bottom-12 bottom-8 z-[6] flex flex-col items-center gap-2 md:block hidden"
-        style="animation: fadeIn 1s ease 2.4s both"
+        class="hero-fade absolute right-5 md:right-8 bottom-8 z-[6] hidden sm:flex flex-col items-center gap-3 text-night"
       >
         <span
-          class="font-mono text-[0.58rem] tracking-[0.28em] uppercase text-muted"
+          class="font-display font-bold text-[0.62rem] tracking-[0.4em] uppercase"
           style="writing-mode: vertical-rl"
-          >scroll</span
+          >Scroll</span
         >
-        <div class="scroll-needle w-px h-14 bg-gold" />
+        <span class="relative block w-px h-16 bg-night/15 overflow-hidden">
+          <span class="scroll-needle absolute inset-x-0 top-0 h-1/2 bg-indigo" />
+        </span>
       </div>
     </div>
   </div>
@@ -187,176 +243,38 @@ onMounted(() => init());
 .fade-leave-to {
   opacity: 0;
 }
-.hero-eyebrow {
-  animation: riseIn 0.6s ease 1.2s both;
-}
-.hero-title {
-  animation: riseIn 0.8s ease 1.4s both;
-}
-.hero-desc {
-  animation: riseIn 0.7s ease 1.6s both;
-}
-.hero-actions {
-  animation: riseIn 0.7s ease 1.8s both;
-}
-.orb-1 {
-  animation: orbDrift 9s ease-in-out infinite;
-}
-.orb-2 {
-  animation: orbDrift 11s ease-in-out 2s infinite reverse;
-}
-.orb-3 {
-  animation: orbPulse 7s ease-in-out infinite;
-}
-@keyframes riseIn {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-@keyframes orbDrift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(25px, -35px);
-  }
-}
-@keyframes orbPulse {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1.12);
-  }
-}
 
-.canvas-glow {
-  box-shadow:
-    0 0 20px rgba(0, 0, 0, 0.8),
-    0 0 40px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(0, 0, 0, 0.4);
-  border-radius: 8px;
+/* Corte diagonal estilo groxi: en móvil el panel ocupa la parte superior */
+.hero-indigo {
+  clip-path: polygon(0 0, 100% 0, 100% 58%, 0 80%);
 }
-
-.title-glow-white {
-  text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.3),
-    0 0 20px rgba(255, 255, 255, 0.2),
-    0 0 30px rgba(255, 255, 255, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.3);
-  animation: titleFloat 4s ease-in-out infinite;
+.hero-aqua {
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 82%);
 }
-
-.title-glow-scarlet {
-  text-shadow:
-    0 0 15px rgba(232, 35, 10, 0.6),
-    0 0 30px rgba(232, 35, 10, 0.4),
-    0 0 45px rgba(232, 35, 10, 0.2),
-    0 2px 4px rgba(0, 0, 0, 0.4);
-  animation: titlePulse 3s ease-in-out infinite;
-}
-
-.title-dot {
-  display: inline-block;
-  color: #f5c842;
-  text-shadow:
-    0 0 10px rgba(245, 200, 66, 0.8),
-    0 0 20px rgba(245, 200, 66, 0.6),
-    0 0 30px rgba(245, 200, 66, 0.4);
-  animation: dotBounce 2s ease-in-out infinite 0.5s;
-}
-
-@keyframes titleFloat {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-    text-shadow:
-      0 0 10px rgba(255, 255, 255, 0.3),
-      0 0 20px rgba(255, 255, 255, 0.2),
-      0 0 30px rgba(255, 255, 255, 0.1),
-      0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    transform: translateY(-3px) scale(1.005);
-    text-shadow:
-      0 0 15px rgba(255, 255, 255, 0.4),
-      0 0 25px rgba(255, 255, 255, 0.3),
-      0 0 35px rgba(255, 255, 255, 0.15),
-      0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-}
-
-@keyframes titlePulse {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-    text-shadow:
-      0 0 15px rgba(232, 35, 10, 0.6),
-      0 0 30px rgba(232, 35, 10, 0.4),
-      0 0 45px rgba(232, 35, 10, 0.2),
-      0 2px 4px rgba(0, 0, 0, 0.4);
-  }
-  50% {
-    transform: translateY(-2px) scale(1.01);
-    text-shadow:
-      0 0 20px rgba(232, 35, 10, 0.8),
-      0 0 40px rgba(232, 35, 10, 0.6),
-      0 0 60px rgba(232, 35, 10, 0.3),
-      0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-}
-
-@keyframes dotBounce {
-  0%,
-  80%,
-  100% {
-    transform: scale(1) rotate(0deg);
-    text-shadow:
-      0 0 10px rgba(245, 200, 66, 0.8),
-      0 0 20px rgba(245, 200, 66, 0.6),
-      0 0 30px rgba(245, 200, 66, 0.4);
-  }
-  40% {
-    transform: scale(1.2) rotate(5deg);
-    text-shadow:
-      0 0 15px rgba(245, 200, 66, 1),
-      0 0 30px rgba(245, 200, 66, 0.8),
-      0 0 45px rgba(245, 200, 66, 0.6);
-  }
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0.3;
-  }
-}
-
-.hero-canvas {
-  transform: translateX(50px);
-}
-
 @media (min-width: 768px) {
-  .hero-canvas {
-    transform: translateX(200px);
+  .hero-indigo {
+    clip-path: polygon(0 0, 60% 0, 38% 100%, 0 100%);
+  }
+  .hero-aqua {
+    clip-path: polygon(0 0, 61.5% 0, 39.5% 100%, 0 100%);
+  }
+}
+
+/* Difumina los bordes del frame (fondo no del todo blanco + marca de agua) */
+.hero-canvas {
+  -webkit-mask-image: radial-gradient(ellipse 46% 50% at 50% 50%, #000 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 46% 50% at 50% 50%, #000 70%, transparent 100%);
+}
+
+.scroll-needle {
+  animation: needle 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes needle {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
   }
 }
 </style>

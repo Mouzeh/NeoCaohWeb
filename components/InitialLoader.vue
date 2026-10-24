@@ -13,6 +13,19 @@ const cards = ref([
 
 const emit = defineEmits(['loaded'])
 
+// Pseudo-aleatorio determinista: mismo resultado en servidor y cliente (sin mismatch de hidratación)
+const rand = (seed: number) => {
+  const x = Math.sin(seed * 9301 + 49297) * 233280
+  return x - Math.floor(x)
+}
+const cardStyle = (i: number) => ({
+  '--delay': `${i * 0.6}s`,
+  '--x': `${rand(i + 1) * 80 + 10}%`,
+  '--y': `${rand(i + 11) * 70 + 15}%`,
+  '--rotation': `${rand(i + 21) * 40 - 20}deg`,
+  '--scale': `${rand(i + 31) * 0.4 + 0.8}`,
+})
+
 onMounted(() => {
   // Hide loader after animation completes
   setTimeout(() => {
@@ -35,13 +48,7 @@ onMounted(() => {
         <div class="cards-container relative w-screen h-screen">
           <div v-for="(card, index) in cards" :key="card"
                class="floating-card absolute"
-               :style="{
-                 '--delay': `${index * 0.6}s`,
-                 '--x': `${Math.random() * 80 + 10}%`,
-                 '--y': `${Math.random() * 70 + 15}%`,
-                 '--rotation': `${Math.random() * 40 - 20}deg`,
-                 '--scale': `${Math.random() * 0.4 + 0.8}`
-               }">
+               :style="cardStyle(index)">
             <div class="card-wrapper">
               <img :src="card" :alt="'Carta Pokémon'" class="card-image" />
               <div class="card-glow"></div>
@@ -54,7 +61,7 @@ onMounted(() => {
       <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
         <div class="logo-section text-center mb-8">
           <h1 class="font-display font-extrabold text-[4rem] md:text-[6rem] tracking-[0.06em] text-white logo-glow">
-            Neo<span class="text-scarlet">Caoh</span>
+            NEO<span class="text-aqua">CAOH</span>
           </h1>
           <p class="font-mono text-[0.9rem] tracking-[0.3em] uppercase text-gold/80 mt-4 typewriter">
             Pokémon TCG Simulator
@@ -80,9 +87,9 @@ onMounted(() => {
 <style scoped>
 .purple-grain {
   background:
-    radial-gradient(circle at 20% 80%, rgba(147, 51, 234, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(85, 65, 212, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(95, 227, 210, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(122, 104, 242, 0.2) 0%, transparent 50%);
   animation: grainShift 8s ease-in-out infinite;
 }
 
@@ -126,7 +133,7 @@ onMounted(() => {
   background: linear-gradient(45deg,
     rgba(245, 200, 66, 0.3),
     rgba(232, 35, 10, 0.3),
-    rgba(147, 51, 234, 0.3)
+    rgba(85, 65, 212, 0.3)
   );
   border-radius: 16px;
   z-index: -1;
@@ -138,8 +145,8 @@ onMounted(() => {
 .logo-glow {
   text-shadow:
     0 0 20px rgba(255, 255, 255, 0.5),
-    0 0 40px rgba(147, 51, 234, 0.4),
-    0 0 60px rgba(168, 85, 247, 0.3);
+    0 0 40px rgba(85, 65, 212, 0.4),
+    0 0 60px rgba(95, 227, 210, 0.3);
   animation: logoBreath 3s ease-in-out infinite;
 }
 
@@ -196,14 +203,14 @@ onMounted(() => {
   0%, 100% {
     text-shadow:
       0 0 20px rgba(255, 255, 255, 0.5),
-      0 0 40px rgba(147, 51, 234, 0.4),
-      0 0 60px rgba(168, 85, 247, 0.3);
+      0 0 40px rgba(85, 65, 212, 0.4),
+      0 0 60px rgba(95, 227, 210, 0.3);
   }
   50% {
     text-shadow:
       0 0 30px rgba(255, 255, 255, 0.7),
-      0 0 60px rgba(147, 51, 234, 0.6),
-      0 0 90px rgba(168, 85, 247, 0.5);
+      0 0 60px rgba(85, 65, 212, 0.6),
+      0 0 90px rgba(95, 227, 210, 0.5);
   }
 }
 

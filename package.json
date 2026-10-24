@@ -14,8 +14,10 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1045.0",
     "@nuxt/content": "^2.13.4",
     "@upstash/redis": "^1.37.0",
+    "gsap": "^3.15.0",
     "nuxt": "^3.15.0",
     "unstorage": "^1.17.4"
   },

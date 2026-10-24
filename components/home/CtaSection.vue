@@ -1,66 +1,82 @@
+<script setup lang="ts">
+import gsap from "gsap";
+
+const root = ref<HTMLElement | null>(null);
+
+useGsap((mm) => {
+  mm.add(MOTION_OK, () => {
+    gsap.fromTo(
+      ".cta-word",
+      { xPercent: (i) => (i ? 18 : -18) },
+      {
+        xPercent: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: root.value,
+          start: "top bottom",
+          end: "center center",
+          scrub: 1,
+        },
+      },
+    );
+    gsap.from(".cta-fade", {
+      y: 30,
+      autoAlpha: 0,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: "power3.out",
+      scrollTrigger: { trigger: root.value, start: "top 55%" },
+    });
+    gsap.to(".cta-sparkle", {
+      rotate: 360,
+      duration: 12,
+      ease: "none",
+      repeat: -1,
+    });
+  });
+}, root);
+</script>
+
 <template>
-  <section class="px-[5vw] py-40 text-center bg-ink2 relative overflow-hidden">
-    <!-- Orbs -->
-    <div
-      class="absolute rounded-full pointer-events-none blur-[100px]"
-      style="
-        width: 700px;
-        height: 700px;
-        background: rgba(92, 26, 143, 0.35);
-        top: -200px;
-        left: 50%;
-        transform: translateX(-50%);
-      "
+  <section
+    ref="root"
+    class="cta relative bg-aqua text-night px-6 md:px-[6vw] pt-[calc(6vw+6rem)] pb-28 overflow-hidden -mt-[6vw]"
+  >
+    <span
+      class="stripes absolute right-0 top-0 w-[28%] h-full text-night/[0.06]"
+      aria-hidden="true"
     />
-    <div
-      class="absolute rounded-full pointer-events-none blur-[100px]"
-      style="
-        width: 380px;
-        height: 380px;
-        background: rgba(232, 35, 10, 0.2);
-        bottom: -80px;
-        left: 18%;
-      "
-    />
-    <div
-      class="absolute rounded-full pointer-events-none blur-[100px]"
-      style="
-        width: 340px;
-        height: 340px;
-        background: rgba(245, 200, 66, 0.1);
-        bottom: -60px;
-        right: 18%;
-      "
+    <span
+      class="cta-sparkle sparkle absolute w-24 h-24 md:w-40 md:h-40 bg-indigo right-[8vw] top-[10vw]"
+      aria-hidden="true"
     />
 
-    <div class="relative z-10">
-      <div
-        class="font-mono text-[0.68rem] tracking-[0.35em] uppercase text-gold flex items-center justify-center gap-4 mb-6 reveal"
-      >
-        <span class="block w-10 h-px bg-gold" />
-        Completamente Gratis
-        <span class="block w-10 h-px bg-gold" />
-      </div>
-
+    <div class="relative max-w-[1300px] mx-auto">
+      <p class="cta-fade eyebrow-wide text-night/70 mb-8">Completamente gratis</p>
       <h2
-        class="font-display font-extrabold leading-[0.9] reveal"
-        style="font-size: clamp(3rem, 8vw, 7rem)"
+        class="font-display font-black italic uppercase leading-[0.9] tracking-[0.02em]"
+        style="font-size: clamp(3.4rem, 12vw, 11rem)"
       >
-        <span class="block text-white">¿Quieres</span>
-        <span class="block text-scarlet">Jugar?</span>
+        <span class="cta-word block">¿Quieres</span>
+        <span class="cta-word block text-indigo md:pl-[12vw]">jugar?</span>
       </h2>
 
-      <p
-        class="text-muted max-w-[440px] mx-auto mt-6 mb-10 leading-[1.8] reveal"
-      >
-        Descarga en menos de un minuto. Disponible para Windows, macOS y Linux.
-        Solo tú, tu mazo y tu rival.
-      </p>
-
-      <div class="flex gap-4 justify-center flex-wrap reveal">
-        <NuxtLink to="/descargar" class="btn-gold">Descargar Gratis</NuxtLink>
-        <NuxtLink to="/terminos" class="btn-outline">Ver Términos</NuxtLink>
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-10 mt-12">
+        <p class="cta-fade max-w-[440px] text-night/75 leading-[1.8]">
+          Juega directo en el navegador o descarga el cliente para Windows,
+          macOS y Linux. Solo tú, tu mazo y tu rival.
+        </p>
+        <div class="cta-fade flex flex-wrap gap-3">
+          <NuxtLink to="/play" class="btn-dark">▶ Jugar en web</NuxtLink>
+          <NuxtLink to="/descargar" class="btn-outline-dark">Descargar</NuxtLink>
+        </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.cta {
+  clip-path: polygon(0 6vw, 100% 0, 100% 100%, 0 100%);
+}
+</style>

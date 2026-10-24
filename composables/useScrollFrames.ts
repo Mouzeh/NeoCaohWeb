@@ -1,3 +1,6 @@
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 export function useScrollFrames(opts: {
   startFrame: number;
   endFrame: number;
@@ -24,9 +27,10 @@ export function useScrollFrames(opts: {
   } = opts;
   const frameCount = endFrame - startFrame + 1;
   const images: HTMLImageElement[] = [];
+  const playhead = { frame: 0 };
   let loaded = 0,
     currentIdx = -1,
-    tickPending = false;
+    tween: gsap.core.Tween | undefined;
 
   function drawFrame(idx: number) {
     const canvas = canvasRef.value;
@@ -39,30 +43,24 @@ export function useScrollFrames(opts: {
     currentIdx = idx;
   }
 
-  function onScroll() {
-    if (tickPending) return;
-    tickPending = true;
-    requestAnimationFrame(() => {
-      const container = scrollContainer.value;
-      if (!container) {
-        tickPending = false;
-        return;
-      }
-      const maxScroll = container.scrollHeight - window.innerHeight;
-      const frac = Math.max(
-        0,
-        Math.min(1, (window.scrollY - container.offsetTop) / maxScroll),
-      );
-      drawFrame(Math.min(frameCount - 1, Math.floor(frac * frameCount)));
-      tickPending = false;
-    });
-  }
-
   function activate() {
     if (isReady.value) return;
     isReady.value = true;
     drawFrame(0);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    gsap.registerPlugin(ScrollTrigger);
+    // El scroll del contenedor controla el frame con un scrub suavizado
+    tween = gsap.to(playhead, {
+      frame: frameCount - 1,
+      snap: "frame",
+      ease: "none",
+      scrollTrigger: {
+        trigger: scrollContainer.value,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.6,
+      },
+      onUpdate: () => drawFrame(playhead.frame),
+    });
     onReady?.();
   }
 
@@ -84,6 +82,11 @@ export function useScrollFrames(opts: {
         loaded++;
         progress.value = Math.round((loaded / frameCount) * 100);
         onProgress?.(progress.value);
+        // Si el frame actual acaba de cargar, píntalo
+        if (images[playhead.frame] === img) {
+          currentIdx = -1;
+          drawFrame(playhead.frame);
+        }
         if (loaded === priorityCount && !isReady.value) {
           clearTimeout(fallbackTimer);
           activate();
@@ -97,6 +100,9 @@ export function useScrollFrames(opts: {
     }
   }
 
-  onUnmounted(() => window.removeEventListener("scroll", onScroll));
+  onUnmounted(() => {
+    tween?.scrollTrigger?.kill();
+    tween?.kill();
+  });
   return { canvasRef, progress, isReady, init };
 }

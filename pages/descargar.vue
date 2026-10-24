@@ -1,30 +1,38 @@
 <script setup lang="ts">
-// 1. Referencia reactiva para los datos dinámicos
-const apiData = ref(null);
-const isLoading = ref(true);
+import gsap from "gsap";
 
-// 2. Función para obtener los datos reales de la nube
+useHead({ title: "Descargar — NeoCaoh" });
+
+const NuxtLinkComp = resolveComponent("NuxtLink");
+
+type OsKey = "web" | "windows" | "mac" | "linux";
+
+// 1. Datos dinámicos de la nube (links y versión)
+const apiData = ref<Record<string, string> | null>(null);
+
 const fetchDownloads = async () => {
   try {
-    const data = await $fetch("/api/downloads");
-    if (data) {
-      apiData.value = data;
-    }
+    const data = await $fetch<Record<string, string>>("/api/downloads");
+    if (data) apiData.value = data;
   } catch (error) {
     console.error("Error al cargar descargas:", error);
-  } finally {
-    isLoading.value = false;
   }
 };
 
-// 3. Ejecutar la carga al montar la página
+// 2. Sistema del visitante (para destacar su descarga)
+const detected = ref<OsKey | null>(null);
+
 onMounted(() => {
   fetchDownloads();
+  const ua = navigator.userAgent;
+  if (/Android|iPhone|iPad/i.test(ua)) detected.value = "web";
+  else if (/Win/i.test(ua)) detected.value = "windows";
+  else if (/Mac/i.test(ua)) detected.value = "mac";
+  else if (/Linux/i.test(ua)) detected.value = "linux";
 });
 
-// 4. Computar la lista de descargas mezclando el diseño con los datos reales
-const downloads = computed(() => {
-  // Si aún no carga o no hay datos, usamos los links por defecto (los que ya tenías)
+// 3. Plataformas: diseño + datos reales
+const platforms = computed(() => {
   const links = apiData.value || {
     windows:
       "https://www.mediafire.com/file/5orodrm1ey10oeb/NeoCaohTCG-windows-Alpha_-_v0.10.0..zip/file",
@@ -32,406 +40,494 @@ const downloads = computed(() => {
     linux: "",
     version: "v0.10.0 Alpha",
   };
+  const version = links.version || "v0.11.1 Alpha";
 
   return [
     {
+      key: "web" as OsKey,
+      os: "Navegador",
+      description: "Juega al instante, sin instalar nada. Chrome, Edge o Firefox.",
+      version,
+      size: "Sin descarga",
+      link: "/play",
+      internal: true,
+      cta: "Jugar ahora",
+    },
+    {
+      key: "windows" as OsKey,
       os: "Windows",
-      icon: "🖥️",
-      description: "Compatible con Windows 10/11 (64-bit)",
-      version: links.version || "v0.11.1 Alpha",
+      description: "Windows 10 / 11 de 64 bits.",
+      version,
       size: "~250 MB",
       link: links.windows,
-      status: links.windows ? "available" : "coming-soon",
+      cta: "Descargar",
     },
     {
+      key: "mac" as OsKey,
       os: "macOS",
-      icon: "🍎",
-      description: "Compatible con macOS 11+ (Intel & Apple Silicon)",
-      version: links.version || "v0.11.1 Alpha",
+      description: "macOS 11 o superior. Intel y Apple Silicon.",
+      version,
       size: "~280 MB",
       link: links.mac,
-      status: links.mac ? "available" : "coming-soon",
+      cta: "Descargar",
     },
     {
+      key: "linux" as OsKey,
       os: "Linux",
-      icon: "🐧",
-      description: "Compatible con Ubuntu 20.04+ y distros similares",
-      version: links.version || "v0.11.1 Alpha",
+      description: "Ubuntu 20.04+ y distribuciones similares.",
+      version,
       size: "~260 MB",
       link: links.linux,
-      status: links.linux ? "available" : "coming-soon",
+      cta: "Descargar",
     },
   ];
 });
 
-const systemRequirements = ref({
-  minimum: [
-    "Sistema Operativo: Windows 10 64-bit / macOS 11+ / Ubuntu 20.04+",
-    "Procesador: Intel Core i3-6100 / AMD FX-6300 o equivalente",
-    "Memoria: 4 GB RAM",
-    "Gráficos: DirectX 11 compatible",
-    "Red: Conexión de banda ancha a Internet",
-    "Almacenamiento: 1 GB de espacio disponible",
-  ],
-  recommended: [
-    "Sistema Operativo: Windows 11 / macOS 12+ / Ubuntu 22.04+",
-    "Procesador: Intel Core i5-8400 / AMD Ryzen 5 2600 o superior",
-    "Memoria: 8 GB RAM",
-    "Gráficos: NVIDIA GTX 1060 / AMD RX 580 o superior",
-    "Red: Conexión de banda ancha estable",
-    "Almacenamiento: 2 GB de espacio disponible",
-  ],
-});
+const primary = computed(
+  () =>
+    platforms.value.find((p) => p.key === detected.value && p.link) ??
+    platforms.value[0],
+);
+
+const steps = [
+  {
+    icon: "download",
+    title: "Descarga",
+    text: "Pulsa el botón de tu sistema operativo y espera a que termine la descarga.",
+  },
+  {
+    icon: "unzip",
+    title: "Extrae",
+    text: "Descomprime el ZIP donde prefieras con el explorador, 7-Zip o WinRAR.",
+  },
+  {
+    icon: "play",
+    title: "Juega",
+    text: "Abre NeoCaoh y entra a la mesa. No requiere instalación adicional.",
+  },
+];
+
+const requirements = [
+  {
+    icon: "os",
+    label: "Sistema",
+    min: "Windows 10 64-bit / macOS 11 / Ubuntu 20.04",
+    rec: "Windows 11 / macOS 12 / Ubuntu 22.04",
+  },
+  {
+    icon: "cpu",
+    label: "Procesador",
+    min: "Intel Core i3-6100 / AMD FX-6300",
+    rec: "Intel Core i5-8400 / AMD Ryzen 5 2600",
+  },
+  { icon: "ram", label: "Memoria", min: "4 GB RAM", rec: "8 GB RAM" },
+  {
+    icon: "gpu",
+    label: "Gráficos",
+    min: "Compatible con DirectX 11",
+    rec: "NVIDIA GTX 1060 / AMD RX 580",
+  },
+  { icon: "disk", label: "Almacenamiento", min: "1 GB libre", rec: "2 GB libres" },
+  {
+    icon: "net",
+    label: "Red",
+    min: "Conexión de banda ancha",
+    rec: "Banda ancha estable",
+  },
+];
+
+// 4. Animaciones
+const root = ref<HTMLElement | null>(null);
+
+useGsap((mm) => {
+  mm.add(MOTION_OK, () => {
+    gsap
+      .timeline({ delay: 0.15 })
+      .from(".dl-line > span", {
+        yPercent: 110,
+        duration: 0.9,
+        stagger: 0.08,
+        ease: "power4.out",
+      })
+      .from(
+        ".dl-fade",
+        { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" },
+        "-=0.6",
+      )
+      .from(
+        ".dl-shot",
+        {
+          x: 120,
+          rotate: 8,
+          autoAlpha: 0,
+          duration: 1.2,
+          stagger: 0.12,
+          ease: "power4.out",
+        },
+        0.1,
+      );
+
+    gsap.to(".dl-shot-a", {
+      yPercent: -12,
+      ease: "none",
+      scrollTrigger: { trigger: ".dl-hero", start: "top top", end: "bottom top", scrub: true },
+    });
+    gsap.to(".dl-shot-b", {
+      yPercent: 10,
+      ease: "none",
+      scrollTrigger: { trigger: ".dl-hero", start: "top top", end: "bottom top", scrub: true },
+    });
+
+    gsap.from(".pf-card", {
+      y: 80,
+      autoAlpha: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: "power4.out",
+      scrollTrigger: { trigger: ".pf-grid", start: "top 85%" },
+    });
+
+    gsap.from(".step", {
+      y: 60,
+      autoAlpha: 0,
+      duration: 0.9,
+      stagger: 0.15,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".steps", start: "top 75%" },
+    });
+    gsap.from(".steps-line", {
+      scaleX: 0,
+      transformOrigin: "left center",
+      ease: "none",
+      scrollTrigger: { trigger: ".steps", start: "top 75%", end: "bottom 60%", scrub: true },
+    });
+
+    gsap.from(".req-row", {
+      x: -40,
+      autoAlpha: 0,
+      duration: 0.7,
+      stagger: 0.07,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".req-table", start: "top 80%" },
+    });
+
+    gsap.from(".help-fade", {
+      y: 40,
+      autoAlpha: 0,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: "power3.out",
+      scrollTrigger: { trigger: ".help", start: "top 70%" },
+    });
+  });
+}, root);
 </script>
 
 <template>
-  <div class="min-h-screen bg-ink text-white">
-    <!-- Hero Section -->
+  <div ref="root" class="bg-night text-white">
+    <!-- ═══ Hero ═══ -->
     <section
-      class="relative px-[5vw] py-24 bg-gradient-to-br from-ink via-ink2 to-ink overflow-hidden"
+      class="dl-hero relative bg-indigo overflow-hidden pt-36 md:pt-40 pb-[calc(7vw+5rem)] px-6 md:px-[6vw]"
     >
-      <!-- Background Effects -->
-      <div class="absolute inset-0 opacity-[0.03]">
-        <div
-          class="orb orb-1 absolute rounded-full"
-          style="
-            width: 500px;
-            height: 500px;
-            background: rgba(245, 200, 66, 0.8);
-            top: 5%;
-            right: -10%;
-            filter: blur(100px);
-          "
-        />
-        <div
-          class="orb orb-2 absolute rounded-full"
-          style="
-            width: 400px;
-            height: 400px;
-            background: rgba(232, 35, 10, 0.6);
-            bottom: 5%;
-            left: -5%;
-            filter: blur(80px);
-          "
-        />
-      </div>
+      <span class="stripes absolute left-0 bottom-0 w-[35%] h-[45%] text-white/[0.05]" aria-hidden="true" />
+      <span class="sparkle absolute w-10 h-10 bg-aqua left-[46%] top-[22%] hidden lg:block" aria-hidden="true" />
+      <span class="sparkle absolute w-5 h-5 bg-white/70 left-[8%] top-[24%]" aria-hidden="true" />
 
-      <div class="relative z-10 max-w-4xl mx-auto text-center">
-        <div
-          class="sec-label inline-flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-6"
-        >
-          <span class="w-6 h-px bg-gold"></span>
-          Descarga
-          <span class="w-6 h-px bg-gold"></span>
-        </div>
-        <h1
-          class="font-display font-extrabold leading-[0.9] mb-6"
-          style="font-size: clamp(2.5rem, 6vw, 4.5rem)"
-        >
-          Descarga <span class="text-scarlet">NeoCaoh</span>
-        </h1>
-        <p
-          class="text-lg text-offwhite/70 max-w-2xl mx-auto leading-relaxed mb-8"
-        >
-          Comienza tu aventura en el mundo del TCG Pokémon. Disponible para
-          todas las plataformas principales.
-        </p>
-        <div
-          class="bg-gradient-to-r from-scarlet/10 to-gold/10 border border-scarlet/20 rounded-2xl p-6 mb-8 max-w-2xl mx-auto"
-        >
-          <div class="flex items-start gap-3">
-            <div
-              class="w-6 h-6 bg-gold rounded-full flex items-center justify-center flex-shrink-0 mt-1"
+      <div class="relative grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-14 items-center max-w-[1300px] mx-auto">
+        <div>
+          <p class="dl-fade eyebrow-wide text-white/60 mb-5">Descarga · Gratis</p>
+          <h1
+            class="font-display font-black italic uppercase leading-[0.86]"
+            style="font-size: clamp(3.6rem, 9vw, 8.5rem)"
+          >
+            <span class="dl-line block overflow-hidden pr-[0.08em]"><span class="block">Lleva el</span></span>
+            <span class="dl-line block overflow-hidden pr-[0.08em] text-aqua"><span class="block">juego contigo</span></span>
+          </h1>
+
+          <p
+            class="dl-fade inline-block mt-6 -ml-1 bg-night font-display font-bold italic uppercase tracking-[0.12em] px-5 py-1.5 -skew-x-12"
+          >
+            <span class="flex items-center gap-2 skew-x-12">
+              <span class="w-2 h-2 rounded-full bg-aqua animate-pulse" />
+              Versión Alpha · {{ platforms[1].version }}
+            </span>
+          </p>
+
+          <p class="dl-fade mt-6 max-w-[460px] text-white/75 leading-relaxed">
+            Es una versión temprana: puede haber bugs o funciones incompletas.
+            Tu feedback en Discord nos ayuda a mejorarla.
+          </p>
+
+          <div class="dl-fade flex flex-wrap items-center gap-3 mt-9">
+            <component
+              :is="primary.internal ? NuxtLinkComp : 'a'"
+              :to="primary.internal ? primary.link : undefined"
+              :href="primary.internal ? undefined : primary.link"
+              :target="primary.internal ? undefined : '_blank'"
+              :rel="primary.internal ? undefined : 'noopener noreferrer'"
+              class="btn-primary"
             >
-              <span class="text-ink text-sm font-bold">α</span>
+              <OsIcon :os="primary.key" class="w-5 h-5" />
+              {{ primary.key === "web" ? "Jugar en navegador" : `Descargar para ${primary.os}` }}
+            </component>
+            <a href="#plataformas" class="btn-outline">Otras plataformas</a>
+          </div>
+        </div>
+
+        <!-- Capturas -->
+        <div class="relative h-[300px] sm:h-[420px] lg:h-[520px]" aria-hidden="true">
+          <img
+            src="/imagenes del juego/mesas.png"
+            alt=""
+            class="dl-shot dl-shot-a absolute right-0 top-0 w-[88%] rounded-[22px] border-4 border-night shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] rotate-[3deg]"
+          />
+          <img
+            src="/imagenes del juego/creacion de deck.png"
+            alt=""
+            class="dl-shot dl-shot-b absolute left-0 bottom-0 w-[70%] rounded-[18px] border-4 border-aqua shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] -rotate-[4deg]"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Plataformas ═══ -->
+    <section
+      id="plataformas"
+      class="pf relative -mt-[7vw] pt-[calc(7vw+5rem)] pb-28 px-6 md:px-[6vw] bg-night scroll-mt-10"
+    >
+      <div class="max-w-[1300px] mx-auto">
+        <div class="sec-head mb-14">
+          <span class="sec-head-sub text-aqua">
+            <span class="stripes w-8 h-5 text-aqua" />
+            Plataformas
+          </span>
+          <h2 class="sec-head-big">download</h2>
+        </div>
+
+        <div class="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <article
+            v-for="p in platforms"
+            :key="p.key"
+            class="pf-card group relative flex flex-col rounded-[26px] p-7 transition-[transform,background-color] duration-500 hover:-translate-y-2"
+            :class="[
+              p.key === 'web' ? 'bg-aqua text-night' : 'bg-panel text-white',
+              detected === p.key ? 'ring-[3px] ring-aqua ring-offset-4 ring-offset-night' : '',
+            ]"
+          >
+            <span
+              v-if="detected === p.key"
+              class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-white text-night font-display font-bold uppercase tracking-[0.15em] text-[0.7rem]"
+            >
+              Tu sistema
+            </span>
+
+            <div class="flex items-start justify-between">
+              <span
+                class="w-16 h-16 rounded-2xl grid place-items-center transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-110"
+                :class="p.key === 'web' ? 'bg-night text-aqua' : 'bg-white/[0.07] text-white'"
+              >
+                <OsIcon :os="p.key" class="w-8 h-8" style="--os-belly: var(--panel)" />
+              </span>
+              <span
+                class="font-mono text-[0.68rem] tracking-[0.15em] px-2.5 py-1 rounded-full"
+                :class="p.key === 'web' ? 'bg-night/10' : 'bg-white/[0.07] text-white/60'"
+              >
+                {{ p.version }}
+              </span>
             </div>
-            <div class="text-left">
-              <h3 class="text-lg font-bold text-gold mb-2">Versión Alpha</h3>
-              <p class="text-offwhite/90 text-sm leading-relaxed">
-                Esta es una versión temprana de desarrollo. Puedes encontrar
-                bugs o funcionalidades incompletas. Tu feedback es invaluable
-                para mejorar el juego.
+
+            <h3 class="font-display font-black italic uppercase text-[2.4rem] leading-none mt-8">
+              {{ p.os }}
+            </h3>
+            <p class="mt-3 text-sm leading-relaxed" :class="p.key === 'web' ? 'text-night/70' : 'text-white/55'">
+              {{ p.description }}
+            </p>
+
+            <div class="mt-auto pt-8">
+              <p
+                class="flex items-center gap-2 font-display font-bold uppercase tracking-[0.18em] text-[0.72rem] mb-4"
+                :class="p.key === 'web' ? 'text-night/60' : 'text-white/40'"
+              >
+                <span class="stripes w-4 h-3" />
+                {{ p.size }}
               </p>
+
+              <NuxtLink v-if="p.internal" :to="p.link" class="btn-dark w-full">
+                <span class="w-0 h-0 border-y-[5px] border-y-transparent border-l-[8px] border-l-current" />
+                {{ p.cta }}
+              </NuxtLink>
+              <a
+                v-else-if="p.link"
+                :href="p.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-primary w-full"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+                </svg>
+                {{ p.cta }}
+              </a>
+              <span
+                v-else
+                class="btn-base w-full border-2 border-dashed border-white/20 text-white/45 cursor-not-allowed hover:!translate-y-0"
+              >
+                Próximamente
+              </span>
             </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Instalación ═══ -->
+    <section class="steps relative bg-paper text-night px-6 md:px-[6vw] py-28 overflow-hidden">
+      <span
+        class="absolute right-[-2vw] top-6 font-display font-black italic uppercase text-[18vw] leading-none text-white/70 select-none pointer-events-none"
+        aria-hidden="true"
+        >INSTALL</span
+      >
+      <div class="relative max-w-[1300px] mx-auto">
+        <div class="sec-head mb-16">
+          <span class="sec-head-sub text-indigo">
+            <span class="stripes w-8 h-5 text-indigo" />
+            Instalación
+          </span>
+          <h2 class="sec-head-big">3 pasos</h2>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+          <span
+            class="steps-line hidden md:block absolute left-[10%] right-[10%] top-[44px] h-[3px] bg-indigo/25"
+            aria-hidden="true"
+          />
+          <div v-for="(s, i) in steps" :key="s.title" class="step relative">
+            <div class="flex items-center gap-4">
+              <span
+                class="relative z-[1] w-[88px] h-[88px] rounded-full bg-indigo text-white grid place-items-center shadow-[0_20px_40px_-15px_rgba(85,65,212,0.7)]"
+              >
+                <svg v-if="s.icon === 'download'" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3v12M7 10l5 5 5-5" />
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                </svg>
+                <svg v-else-if="s.icon === 'unzip'" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <path d="M12 10v2M12 14v2" />
+                </svg>
+                <svg v-else class="w-9 h-9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" />
+                </svg>
+              </span>
+              <span class="font-display font-black italic text-[4.5rem] leading-none text-indigo/20">
+                0{{ i + 1 }}
+              </span>
+            </div>
+            <h3 class="font-display font-black italic uppercase text-4xl mt-6">{{ s.title }}</h3>
+            <p class="mt-3 text-night/65 leading-relaxed max-w-[320px]">{{ s.text }}</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Download Cards -->
+    <!-- ═══ Requisitos ═══ -->
+    <section class="relative bg-night px-6 md:px-[6vw] py-28">
+      <div class="max-w-[1300px] mx-auto">
+        <div class="sec-head mb-14">
+          <span class="sec-head-sub text-aqua">
+            <span class="stripes w-8 h-5 text-aqua" />
+            Requisitos
+          </span>
+          <h2 class="sec-head-big">specs</h2>
+        </div>
+
+        <div class="req-table rounded-[26px] bg-panel overflow-hidden">
+          <div
+            class="hidden md:grid grid-cols-[1fr_1.3fr_1.3fr] px-8 py-5 border-b border-white/10 font-display font-bold uppercase tracking-[0.25em] text-[0.75rem] text-white/45"
+          >
+            <span>Componente</span>
+            <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-white/40" />Mínimo</span>
+            <span class="flex items-center gap-2 text-aqua"><span class="w-2 h-2 rounded-full bg-aqua" />Recomendado</span>
+          </div>
+          <div
+            v-for="r in requirements"
+            :key="r.label"
+            class="req-row grid grid-cols-1 md:grid-cols-[1fr_1.3fr_1.3fr] gap-2 md:gap-0 px-6 md:px-8 py-5 border-b border-white/[0.06] last:border-b-0 transition-colors hover:bg-white/[0.03]"
+          >
+            <span class="flex items-center gap-3 font-display font-black italic uppercase text-xl">
+              <span class="w-10 h-10 rounded-xl bg-indigo/40 text-aqua grid place-items-center shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <template v-if="r.icon === 'os'">
+                    <rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" />
+                  </template>
+                  <template v-else-if="r.icon === 'cpu'">
+                    <rect x="6" y="6" width="12" height="12" rx="2" /><rect x="9.5" y="9.5" width="5" height="5" />
+                    <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" />
+                  </template>
+                  <template v-else-if="r.icon === 'ram'">
+                    <rect x="2" y="7" width="20" height="10" rx="1.5" /><path d="M6 11v2M10 11v2M14 11v2M18 11v2M5 17v3M19 17v3" />
+                  </template>
+                  <template v-else-if="r.icon === 'gpu'">
+                    <rect x="2" y="6" width="20" height="11" rx="2" /><circle cx="9" cy="11.5" r="3" /><path d="M15 9.5h4M15 13.5h4M5 17v3" />
+                  </template>
+                  <template v-else-if="r.icon === 'disk'">
+                    <ellipse cx="12" cy="6" rx="8" ry="3" /><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+                  </template>
+                  <template v-else>
+                    <path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0" /><circle cx="12" cy="19.5" r="1" fill="currentColor" />
+                  </template>
+                </svg>
+              </span>
+              {{ r.label }}
+            </span>
+            <span class="flex items-center text-white/65 text-[0.95rem] md:pr-6">
+              <span class="md:hidden font-display font-bold uppercase tracking-[0.2em] text-[0.65rem] text-white/35 w-28 shrink-0">Mínimo</span>
+              {{ r.min }}
+            </span>
+            <span class="flex items-center text-white text-[0.95rem]">
+              <span class="md:hidden font-display font-bold uppercase tracking-[0.2em] text-[0.65rem] text-aqua w-28 shrink-0">Recomendado</span>
+              {{ r.rec }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Ayuda ═══ -->
     <section
-      class="px-[5vw] md:px-[5vw] px-[4vw] py-16 md:py-16 py-12 max-w-6xl mx-auto"
+      class="help relative bg-aqua text-night px-6 md:px-[6vw] pt-[calc(6vw+5rem)] pb-24 -mt-[6vw] overflow-hidden"
     >
-      <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8 gap-6 mb-20 md:mb-20 mb-16"
-      >
-        <div
-          v-for="download in downloads"
-          :key="download.os"
-          class="download-card group relative bg-gradient-to-br from-panel/80 to-ink2/80 border border-white/10 rounded-2xl p-8 md:p-8 p-6 backdrop-blur-sm transition-all duration-500 hover:border-gold/30 hover:scale-[1.02]"
-        >
-          <!-- OS Icon -->
-          <div
-            class="text-6xl md:text-6xl text-5xl mb-6 md:mb-6 mb-4 group-hover:scale-110 transition-transform duration-300"
+      <span class="stripes absolute right-0 top-0 w-[28%] h-full text-night/[0.06]" aria-hidden="true" />
+      <div class="relative max-w-[1300px] mx-auto flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div>
+          <p class="help-fade eyebrow-wide text-night/60 mb-5">Soporte</p>
+          <h2
+            class="help-fade font-display font-black italic uppercase leading-[0.86]"
+            style="font-size: clamp(3rem, 8vw, 7rem)"
           >
-            {{ download.icon }}
-          </div>
-
-          <!-- OS Name -->
-          <h3
-            class="font-display font-extrabold text-2xl md:text-2xl text-xl text-white mb-3 md:mb-3 mb-2"
-          >
-            {{ download.os }}
-          </h3>
-
-          <!-- Description -->
-          <p
-            class="text-muted text-sm md:text-sm text-xs mb-4 md:mb-4 mb-3 leading-relaxed"
-          >
-            {{ download.description }}
+            ¿Necesitas<br /><span class="text-indigo">ayuda?</span>
+          </h2>
+          <p class="help-fade mt-6 max-w-[460px] text-night/70 leading-relaxed">
+            Si algo falla al descargar o instalar, la comunidad y el equipo de
+            desarrollo te ayudan en Discord.
           </p>
-
-          <!-- Version & Size -->
-          <div
-            class="flex justify-between items-center mb-6 md:mb-6 mb-4 text-sm md:text-sm text-xs"
-          >
-            <span
-              class="bg-violet2/20 text-violet2 px-3 py-1 md:px-3 md:py-1 px-2 py-1 rounded-full font-mono"
-              >{{ download.version }}</span
-            >
-            <span class="text-muted">{{ download.size }}</span>
-          </div>
-
-          <!-- Download Button -->
-          <template v-if="download.status === 'available'">
-            <a
-              :href="download.link"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-primary w-full flex items-center justify-center group-hover:bg-gold group-hover:text-ink transition-all duration-300 text-sm md:text-base py-3 md:py-3 py-2"
-            >
-              <svg
-                class="w-5 h-5 md:w-5 md:h-5 w-4 h-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Descargar
-            </a>
-          </template>
-          <template v-else>
-            <button
-              disabled
-              class="btn-outline w-full flex items-center justify-center opacity-50 cursor-not-allowed text-sm md:text-base py-3 md:py-3 py-2"
-            >
-              <svg
-                class="w-5 h-5 md:w-5 md:h-5 w-4 h-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Próximamente
-            </button>
-          </template>
         </div>
-      </div>
-
-      <!-- Installation Guide -->
-      <div
-        class="bg-gradient-to-r from-ink2/80 to-panel/80 border border-white/5 rounded-2xl p-8 md:p-8 p-6 mb-16 md:mb-16 mb-12"
-      >
-        <h2
-          class="font-display font-extrabold text-3xl md:text-3xl text-2xl text-white mb-8 md:mb-8 mb-6 text-center"
-        >
-          Guía de <span class="text-gold">Instalación</span>
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8 gap-6">
-          <div class="text-center group">
-            <div
-              class="w-16 h-16 md:w-16 md:h-16 w-14 h-14 bg-scarlet/20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-4 mb-3 group-hover:bg-scarlet/30 transition-colors duration-300"
-            >
-              <span class="text-2xl md:text-2xl text-xl">1️⃣</span>
-            </div>
-            <h3
-              class="font-bold text-lg md:text-lg text-base text-white mb-2 md:mb-2 mb-1"
-            >
-              Descarga
-            </h3>
-            <p class="text-muted text-sm md:text-sm text-xs leading-relaxed">
-              Haz clic en el botón de descarga de tu sistema operativo y espera
-              a que se complete.
-            </p>
-          </div>
-
-          <div class="text-center group">
-            <div
-              class="w-16 h-16 md:w-16 md:h-16 w-14 h-14 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-4 mb-3 group-hover:bg-gold/30 transition-colors duration-300"
-            >
-              <span class="text-2xl md:text-2xl text-xl">2️⃣</span>
-            </div>
-            <h3
-              class="font-bold text-lg md:text-lg text-base text-white mb-2 md:mb-2 mb-1"
-            >
-              Extrae
-            </h3>
-            <p class="text-muted text-sm md:text-sm text-xs leading-relaxed">
-              Descomprime el archivo ZIP en la ubicación que prefieras usando
-              WinRAR, 7-Zip o similar.
-            </p>
-          </div>
-
-          <div class="text-center group">
-            <div
-              class="w-16 h-16 md:w-16 md:h-16 w-14 h-14 bg-violet2/20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-4 mb-3 group-hover:bg-violet2/30 transition-colors duration-300"
-            >
-              <span class="text-2xl md:text-2xl text-xl">3️⃣</span>
-            </div>
-            <h3
-              class="font-bold text-lg md:text-lg text-base text-white mb-2 md:mb-2 mb-1"
-            >
-              Ejecuta
-            </h3>
-            <p class="text-muted text-sm md:text-sm text-xs leading-relaxed">
-              Ejecuta NeoCaoh.exe y comienza a jugar. ¡No requiere instalación
-              adicional!
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- System Requirements -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div
-          class="bg-gradient-to-br from-panel/40 to-ink2/40 border border-white/5 rounded-2xl p-8"
-        >
-          <h3
-            class="font-display font-bold text-xl text-white mb-6 flex items-center gap-3"
-          >
-            <span class="w-2 h-2 bg-gold rounded-full"></span>
-            Requisitos Mínimos
-          </h3>
-          <ul class="space-y-3">
-            <li
-              v-for="req in systemRequirements.minimum"
-              :key="req"
-              class="flex items-start gap-3 text-sm text-muted leading-relaxed"
-            >
-              <span
-                class="w-1 h-1 bg-gold rounded-full mt-2 flex-shrink-0"
-              ></span>
-              {{ req }}
-            </li>
-          </ul>
-        </div>
-
-        <div
-          class="bg-gradient-to-br from-panel/40 to-ink2/40 border border-white/5 rounded-2xl p-8"
-        >
-          <h3
-            class="font-display font-bold text-xl text-white mb-6 flex items-center gap-3"
-          >
-            <span class="w-2 h-2 bg-scarlet rounded-full"></span>
-            Requisitos Recomendados
-          </h3>
-          <ul class="space-y-3">
-            <li
-              v-for="req in systemRequirements.recommended"
-              :key="req"
-              class="flex items-start gap-3 text-sm text-muted leading-relaxed"
-            >
-              <span
-                class="w-1 h-1 bg-scarlet rounded-full mt-2 flex-shrink-0"
-              ></span>
-              {{ req }}
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Support Section -->
-      <div
-        class="bg-gradient-to-r from-violet2/10 to-sky/10 border border-violet2/20 rounded-2xl p-8 mt-16 text-center"
-      >
-        <h3 class="font-display font-bold text-2xl text-white mb-4">
-          ¿Necesitas Ayuda?
-        </h3>
-        <p class="text-offwhite/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Si tienes problemas con la descarga o instalación, únete a nuestro
-          Discord donde la comunidad y el equipo de desarrollo estarán
-          encantados de ayudarte.
-        </p>
-
-        <!-- Discord Button -->
-        <div class="mb-8 flex justify-center">
+        <div class="help-fade flex flex-wrap gap-3">
           <a
             href="https://discord.gg/BNpF4XQEkX"
             target="_blank"
             rel="noopener noreferrer"
-            class="discord-button group relative"
+            class="btn-dark !pl-3"
           >
-            <div class="discord-glow"></div>
-            <div class="discord-content">
-              <div class="discord-icon-wrapper">
-                <svg
-                  class="discord-icon"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"
-                  />
-                </svg>
-              </div>
-              <div class="discord-text">
-                <span class="discord-main">¿Necesitas Ayuda?</span>
-                <span class="discord-sub">¡Únete al Discord!</span>
-              </div>
-            </div>
-            <div class="discord-pulse"></div>
-          </a>
-        </div>
-
-        <!-- Terms Button - Centered and More Beautiful -->
-        <div class="pt-6 border-t border-white/10">
-          <NuxtLink
-            to="/terminos"
-            class="terms-button group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden"
-          >
-            <div
-              class="terms-glow absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            ></div>
-            <div
-              class="relative flex items-center gap-3 text-white/80 group-hover:text-white transition-colors duration-300"
-            >
-              <svg
-                class="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+            <span class="w-10 h-10 rounded-full bg-[#5865F2] grid place-items-center text-white">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                  d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"
                 />
               </svg>
-              <span class="font-medium text-sm"
-                >Ver Términos y Condiciones</span
-              >
-            </div>
-          </NuxtLink>
+            </span>
+            Unirme al Discord
+          </a>
+          <NuxtLink to="/terminos" class="btn-outline-dark">Términos y condiciones</NuxtLink>
         </div>
       </div>
     </section>
@@ -439,266 +535,10 @@ const systemRequirements = ref({
 </template>
 
 <style scoped>
-.sec-label {
-  animation: fadeIn 0.6s ease forwards;
+.pf {
+  clip-path: polygon(0 7vw, 100% 0, 100% 100%, 0 100%);
 }
-
-.orb-1 {
-  animation: orbDrift 15s ease-in-out infinite;
-}
-
-.orb-2 {
-  animation: orbDrift 12s ease-in-out 3s infinite reverse;
-}
-
-.download-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(245, 200, 66, 0.1) 0%,
-    transparent 50%,
-    rgba(232, 35, 10, 0.1) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-
-.download-card:hover::before {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes orbDrift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(30px, -40px);
-  }
-}
-
-/* Discord Button Styles */
-.discord-button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  border-radius: 12px;
-  text-decoration: none;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.discord-button:hover {
-  transform: translateY(-6px) scale(1.05);
-  filter: brightness(1.1);
-}
-
-.discord-glow {
-  position: absolute;
-  inset: -4px;
-  background: linear-gradient(
-    135deg,
-    #5865f2 0%,
-    #7289da 25%,
-    #5865f2 50%,
-    #4752c4 75%,
-    #5865f2 100%
-  );
-  border-radius: 16px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  filter: blur(8px);
-  animation: discordGlowRotate 3s linear infinite;
-}
-
-.discord-button:hover .discord-glow {
-  opacity: 0.6;
-}
-
-.discord-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  background: linear-gradient(
-    135deg,
-    rgba(88, 101, 242, 0.9) 0%,
-    rgba(114, 137, 218, 0.9) 100%
-  );
-  border: 1px solid rgba(114, 137, 218, 0.3);
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  font-size: 0.95rem;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.discord-button:hover .discord-content {
-  background: linear-gradient(135deg, #5865f2 0%, #7289da 100%);
-  border-color: rgba(114, 137, 218, 0.6);
-  box-shadow:
-    0 20px 40px rgba(88, 101, 242, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.discord-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.discord-button:hover .discord-icon-wrapper {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1) rotate(5deg);
-}
-
-.discord-icon {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.3s ease;
-}
-
-.discord-button:hover .discord-icon {
-  transform: scale(1.1);
-}
-
-.discord-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.discord-main {
-  font-weight: 600;
-  line-height: 1.2;
-  transition: transform 0.3s ease;
-}
-
-.discord-sub {
-  font-size: 0.75rem;
-  opacity: 0.8;
-  font-weight: 400;
-  line-height: 1.2;
-  transition: all 0.3s ease;
-}
-
-.discord-button:hover .discord-main {
-  transform: translateX(2px);
-}
-
-.discord-button:hover .discord-sub {
-  opacity: 1;
-  transform: translateX(2px);
-}
-
-.discord-pulse {
-  position: absolute;
-  inset: -8px;
-  border: 2px solid rgba(88, 101, 242, 0.4);
-  border-radius: 20px;
-  opacity: 0;
-  animation: discordPulse 2s ease-out infinite;
-}
-
-.discord-button:hover .discord-pulse {
-  animation-play-state: running;
-}
-
-@keyframes discordGlowRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes discordPulse {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.4);
-  }
-}
-
-/* Terms Button Styles */
-.terms-button {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.terms-button:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.terms-glow {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(168, 85, 247, 0.1) 50%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  filter: blur(8px);
-}
-
-.terms-button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.05),
-    transparent,
-    rgba(168, 85, 247, 0.05)
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.terms-button:hover::before {
-  opacity: 1;
+.help {
+  clip-path: polygon(0 0, 100% 6vw, 100% 100%, 0 100%);
 }
 </style>

@@ -1,72 +1,109 @@
 <script setup lang="ts">
-const types = [
-  { icon: '/frames/tipos/fire.png', glow: 'fire-glow' },
-  { icon: '/frames/tipos/water.png', glow: 'water-glow' },
-  { icon: '/frames/tipos/grass.png', glow: 'grass-glow' },
-  { icon: '/frames/tipos/electric.png', glow: 'electric-glow' },
-  { icon: '/frames/tipos/psy.png', glow: 'psy-glow' },
-  { icon: '/frames/tipos/dark.png', glow: 'dark-glow' },
-  { icon: '/frames/tipos/dragon.png', glow: 'dragon-glow' },
-  { icon: '/frames/tipos/metal.png', glow: 'metal-glow' },
-]
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { energyMeta } from "~/data/cards";
+
+const sets = [
+  "Neo Genesis",
+  "Neo Discovery",
+  "Neo Revelation",
+  "Neo Destiny",
+  "Legendary Collection",
+];
+const types = Object.values(energyMeta).filter((t) => t.label !== "Incolora");
+
+const root = ref<HTMLElement | null>(null);
+
+useGsap((mm) => {
+  mm.add(MOTION_OK, () => {
+    const rows = gsap.utils.toArray<HTMLElement>(".mq-track");
+    const tweens = rows.map((row, i) =>
+      gsap.fromTo(
+        row,
+        { xPercent: i % 2 ? -50 : 0 },
+        {
+          xPercent: i % 2 ? 0 : -50,
+          duration: i % 2 ? 26 : 34,
+          ease: "none",
+          repeat: -1,
+        },
+      ),
+    );
+    // Arranca "lejos" del inicio para poder invertir sin topar con el tiempo 0
+    tweens.forEach((t) => t.totalTime(t.duration() * 200));
+
+    // La velocidad del scroll acelera (o invierte) la marquesina
+    ScrollTrigger.create({
+      trigger: root.value,
+      start: "top bottom",
+      end: "bottom top",
+      onUpdate(self) {
+        const boost = gsap.utils.clamp(-5, 5, self.getVelocity() / 250);
+        tweens.forEach((t) => {
+          t.timeScale(boost || 1);
+          gsap.to(t, {
+            timeScale: self.direction,
+            duration: 1.2,
+            ease: "power2.out",
+            overwrite: true,
+          });
+        });
+      },
+    });
+  });
+}, root);
 </script>
 
 <template>
-  <div class="bg-panel px-12 py-[1.6rem] flex items-center justify-center gap-8 overflow-x-auto scrollbar-hide border-y border-white/[0.04]">
-    <div v-for="(t, index) in types" :key="t.icon"
-         class="type-icon flex-shrink-0"
-         :class="t.glow"
-         :style="{ animationDelay: `${index * 0.2}s` }">
-      <img :src="t.icon" alt="Tipo" class="w-8 h-8" />
+  <section
+    ref="root"
+    class="marquee relative z-[2] -mt-[7vw] bg-night pt-[calc(7vw+3.5rem)] pb-14 overflow-hidden"
+  >
+    <span
+      class="stripes absolute right-[6vw] top-[2vw] w-24 h-10 text-aqua hidden md:block"
+      aria-hidden="true"
+    />
+
+    <div class="flex w-max mq-track" aria-hidden="true">
+      <div v-for="n in 2" :key="n" class="flex items-center shrink-0">
+        <template v-for="(s, i) in sets" :key="s">
+          <span
+            class="font-display font-black italic uppercase leading-none px-6 whitespace-nowrap"
+            :class="i % 2 ? 'text-aqua' : 'text-white'"
+            style="font-size: clamp(3.4rem, 8.5vw, 8rem)"
+            >{{ s }}</span
+          >
+          <span class="sparkle w-8 h-8 md:w-12 md:h-12 bg-aqua shrink-0" />
+        </template>
+      </div>
     </div>
-  </div>
+
+    <div class="flex w-max mq-track mt-8" aria-hidden="true">
+      <div v-for="n in 2" :key="n" class="flex items-center shrink-0">
+        <span
+          v-for="(t, j) in [...types, ...types]"
+          :key="j"
+          class="flex items-center gap-3 mx-3 pl-2 pr-5 py-2 rounded-full bg-white/[0.06] border border-white/10"
+        >
+          <img :src="t.icon" alt="" class="w-8 h-8" loading="lazy" />
+          <span class="font-display font-bold text-base tracking-[0.2em] uppercase text-white/80">
+            {{ t.label }}
+          </span>
+        </span>
+      </div>
+    </div>
+    <p class="sr-only">
+      Expansiones disponibles: {{ sets.join(", ") }}.
+    </p>
+  </section>
 </template>
 
 <style scoped>
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-
-.type-icon {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.6s ease forwards;
+.marquee {
+  clip-path: polygon(0 7vw, 100% 0, 100% 100%, 0 100%);
 }
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fire-glow {
-  filter: drop-shadow(0 0 8px rgba(232, 80, 10, 0.6)) drop-shadow(0 0 16px rgba(255, 140, 90, 0.4));
-}
-
-.water-glow {
-  filter: drop-shadow(0 0 8px rgba(59, 168, 224, 0.6)) drop-shadow(0 0 16px rgba(125, 205, 255, 0.4));
-}
-
-.grass-glow {
-  filter: drop-shadow(0 0 8px rgba(78, 200, 80, 0.6)) drop-shadow(0 0 16px rgba(142, 232, 144, 0.4));
-}
-
-.electric-glow {
-  filter: drop-shadow(0 0 8px rgba(245, 200, 66, 0.6)) drop-shadow(0 0 16px rgba(255, 224, 122, 0.4));
-}
-
-.psy-glow {
-  filter: drop-shadow(0 0 8px rgba(220, 50, 200, 0.6)) drop-shadow(0 0 16px rgba(240, 122, 234, 0.4));
-}
-
-.dark-glow {
-  filter: drop-shadow(0 0 8px rgba(123, 95, 181, 0.6)) drop-shadow(0 0 16px rgba(184, 152, 232, 0.4));
-}
-
-.dragon-glow {
-  filter: drop-shadow(0 0 8px rgba(80, 50, 220, 0.6)) drop-shadow(0 0 16px rgba(138, 116, 240, 0.4));
-}
-
-.metal-glow {
-  filter: drop-shadow(0 0 8px rgba(160, 170, 200, 0.6)) drop-shadow(0 0 16px rgba(200, 208, 232, 0.4));
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.55);
 }
 </style>
