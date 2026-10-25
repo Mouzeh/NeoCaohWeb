@@ -145,7 +145,7 @@ useGsap((mm) => {
           class="hidden lg:flex items-center gap-3 mt-12 font-display font-bold text-[0.7rem] tracking-[0.3em] uppercase text-night/50"
         >
           Sigue bajando
-          <span class="text-indigo text-lg">→</span>
+          <AppIcon name="arrow-right" class="w-5 h-5 text-indigo" />
         </p>
       </div>
 

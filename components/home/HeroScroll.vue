@@ -2,8 +2,10 @@
 import gsap from "gsap";
 
 const scrollContainer = ref<HTMLElement | null>(null);
-const loaderVisible = ref(true);
-const loadProgress = ref(0);
+const canvasVisible = ref(false);
+// La página indica cuándo arrancar la entrada (tras el loader de primera visita)
+const introReady = useState("hero-intro-ready", () => false);
+const introPending = ref(true);
 
 const { canvasRef, init } = useScrollFrames({
   startFrame: 77,
@@ -12,11 +14,8 @@ const { canvasRef, init } = useScrollFrames({
   videoHeight: 720,
   scrollContainer,
   framePath: (n) => `/frames/png/frame_${n}.png`,
-  onProgress: (pct) => {
-    loadProgress.value = pct;
-  },
   onReady: () => {
-    loaderVisible.value = false;
+    canvasVisible.value = true;
   },
 });
 
@@ -31,59 +30,64 @@ const sparkles = [
 
 onMounted(() => init());
 
+// Entrada: los estados iniciales vienen ocultos por CSS desde el servidor
+// (clase .intro-pending), así no hay parpadeo de "visible → oculto → animado".
+function playIntro() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    introPending.value = false;
+    return;
+  }
+  const root = scrollContainer.value!;
+  const q = gsap.utils.selector(root);
+  root.classList.remove("intro-pending");
+  gsap.set(q(".hero-panels"), { clipPath: "inset(0% 100% 0% 0%)" });
+  gsap.set(q(".hero-line > span"), { yPercent: 105 });
+  gsap.set(q(".hero-fade"), { autoAlpha: 0, y: 18 });
+  gsap.set(q(".hero-sparkle"), { scale: 0 });
+  introPending.value = false;
+
+  gsap
+    .timeline({ delay: 0.15, defaults: { ease: "power3.out" } })
+    .to(q(".hero-panels"), {
+      clipPath: "inset(0% 0% 0% 0%)",
+      duration: 1.6,
+      ease: "expo.inOut",
+    })
+    .to(q(".hero-line > span"), { yPercent: 0, duration: 1.3, stagger: 0.14 }, "-=0.7")
+    .to(q(".hero-fade"), { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.1 }, "-=0.9")
+    .to(
+      q(".hero-sparkle"),
+      { scale: 1, duration: 1, stagger: 0.1, ease: "back.out(1.6)" },
+      "-=1",
+    )
+    .add(() => {
+      gsap.to(q(".hero-sparkle"), {
+        scale: 0.6,
+        opacity: 0.5,
+        rotate: 45,
+        duration: 1.8,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        stagger: { each: 0.35, from: "random" },
+      });
+    });
+}
+
+onMounted(() => {
+  if (introReady.value) playIntro();
+  else {
+    const stop = watch(introReady, (ready) => {
+      if (ready) {
+        stop();
+        playIntro();
+      }
+    });
+  }
+});
+
 useGsap((mm) => {
   mm.add(MOTION_OK, () => {
-    // Entrada
-    gsap
-      .timeline({ delay: 0.3 })
-      .from(".hero-aqua", {
-        clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
-        duration: 1.1,
-        ease: "power4.inOut",
-      })
-      .from(
-        ".hero-indigo",
-        {
-          clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
-          duration: 1.1,
-          ease: "power4.inOut",
-        },
-        "<0.08",
-      )
-      .from(
-        ".hero-line > span",
-        { yPercent: 110, duration: 0.9, stagger: 0.09, ease: "power4.out" },
-        "-=0.45",
-      )
-      .from(
-        ".hero-fade",
-        { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" },
-        "-=0.5",
-      )
-      .from(
-        ".hero-sparkle",
-        {
-          scale: 0,
-          rotate: -90,
-          duration: 0.8,
-          stagger: 0.07,
-          ease: "back.out(2)",
-        },
-        "-=0.8",
-      );
-
-    gsap.to(".hero-sparkle", {
-      scale: 0.6,
-      opacity: 0.5,
-      rotate: 45,
-      duration: 1.6,
-      ease: "sine.inOut",
-      yoyo: true,
-      repeat: -1,
-      stagger: { each: 0.35, from: "random" },
-      delay: 2,
-    });
-
     // Scroll: el texto se aleja y el panel índigo se repliega
     gsap
       .timeline({
@@ -116,28 +120,12 @@ useGsap((mm) => {
 </script>
 
 <template>
-  <Transition name="fade">
-    <div
-      v-if="loaderVisible"
-      class="fixed inset-0 z-[900] bg-indigo flex flex-col items-center justify-center gap-6"
-    >
-      <span class="sparkle w-12 h-12 bg-aqua animate-spin [animation-duration:2.4s]" />
-      <p class="font-display font-black italic text-[3.2rem] tracking-[0.02em] text-white">
-        NEO<span class="text-aqua">CAOH</span>
-      </p>
-      <div class="w-56 h-[3px] bg-white/15 rounded-full overflow-hidden">
-        <div
-          class="h-full bg-aqua rounded-full transition-[width] duration-100"
-          :style="{ width: loadProgress + '%' }"
-        />
-      </div>
-      <p class="font-mono text-[0.7rem] tracking-[0.3em] text-white/60">
-        {{ loadProgress }}%
-      </p>
-    </div>
-  </Transition>
-
-  <div ref="scrollContainer" class="relative bg-white" style="height: 300vh">
+  <div
+    ref="scrollContainer"
+    class="relative bg-white"
+    :class="{ 'intro-pending': introPending }"
+    style="height: 300vh"
+  >
     <div class="sticky top-0 h-[100svh] overflow-hidden">
       <!-- Texto fantasma -->
       <span
@@ -152,7 +140,8 @@ useGsap((mm) => {
       >
         <canvas
           ref="canvasRef"
-          class="hero-canvas block w-[115%] max-w-none md:w-[68vw] md:max-w-[1100px] h-auto mix-blend-multiply"
+          class="hero-canvas block w-[115%] max-w-none md:w-[68vw] md:max-w-[1100px] h-auto mix-blend-multiply transition-opacity duration-[1400ms] ease-out"
+          :class="canvasVisible ? 'opacity-100' : 'opacity-0'"
         />
       </div>
 
@@ -212,7 +201,7 @@ useGsap((mm) => {
           <li>Gratis, para siempre</li>
         </ul>
         <div class="hero-fade flex flex-wrap gap-3 mt-9">
-          <NuxtLink to="/play" class="btn-primary">▶ Jugar ahora</NuxtLink>
+          <NuxtLink to="/play" class="btn-primary"><AppIcon name="play" class="w-4 h-4" /> Jugar ahora</NuxtLink>
           <NuxtLink to="/cartas" class="btn-outline">Ver cartas</NuxtLink>
         </div>
       </div>
@@ -235,13 +224,21 @@ useGsap((mm) => {
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+/* Estado previo a la entrada (renderizado ya en el servidor) */
+@media (prefers-reduced-motion: no-preference) {
+  .intro-pending .hero-panels {
+    clip-path: inset(0% 100% 0% 0%);
+  }
+  .intro-pending .hero-line > span {
+    transform: translateY(105%);
+  }
+  .intro-pending .hero-fade {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .intro-pending .hero-sparkle {
+    transform: scale(0);
+  }
 }
 
 /* Corte diagonal estilo groxi: en móvil el panel ocupa la parte superior */

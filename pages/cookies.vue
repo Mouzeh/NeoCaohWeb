@@ -1,155 +1,132 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Política de Cookies - NeoCaoh',
+  title: 'Política de Cookies — NeoCaoh',
   description: 'Información sobre el uso de cookies en NeoCaoh, el simulador TCG Pokémon'
 })
+
+const types = [
+  {
+    name: 'Esenciales',
+    tag: 'Siempre activas',
+    desc: 'Necesarias para el funcionamiento básico del sitio. No se pueden desactivar.',
+    items: ['Configuración de cookies aceptadas', 'Estado de primera visita al sitio', 'Preferencias de idioma'],
+    tone: 'bg-aqua text-night',
+  },
+  {
+    name: 'Funcionales',
+    tag: 'Opcionales',
+    desc: 'Mejoran la funcionalidad y personalización del sitio.',
+    items: ['Preferencias de tema', 'Configuración de la interfaz de usuario', 'Datos de sesión del simulador'],
+    tone: 'bg-indigo text-white',
+  },
+  {
+    name: 'De análisis',
+    tag: 'Opcionales',
+    desc: 'Nos ayudan a entender cómo los usuarios interactúan con el sitio.',
+    items: ['Estadísticas de uso anónimas', 'Páginas más visitadas', 'Tiempo de permanencia en el sitio'],
+    tone: 'bg-paper text-night',
+  },
+]
+
+const configureCookies = () => {
+  if (import.meta.client && (window as any).showCookieSettings) {
+    (window as any).showCookieSettings()
+  }
+}
 </script>
 
 <template>
-  <div class="min-h-screen pt-24 pb-12 px-[5vw]">
-    <div class="max-w-4xl mx-auto">
-      <!-- Header -->
-      <div class="text-center mb-16">
-        <h1 class="font-display font-extrabold text-4xl md:text-5xl tracking-[0.06em] text-white mb-4">
-          Política de <span class="text-scarlet">Cookies</span>
-        </h1>
-        <p class="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-          Información sobre cómo utilizamos las cookies para mejorar tu experiencia en NeoCaoh
-        </p>
-      </div>
+  <div class="bg-night text-white min-h-screen">
+    <PageHero
+      sub="Legal"
+      big="cookies"
+      :title="['Política', 'de cookies']"
+      description="Cómo usamos las cookies para recordar tus preferencias y mejorar tu experiencia en NeoCaoh."
+    />
 
-      <!-- Content -->
-      <div class="space-y-12">
-        <!-- What are cookies -->
-        <section class="bg-panel border border-white/10 rounded-xl p-8">
-          <h2 class="font-display font-bold text-2xl text-white mb-4 flex items-center gap-3">
-            <span class="w-8 h-8 bg-scarlet rounded-lg flex items-center justify-center text-sm">🍪</span>
-            ¿Qué son las cookies?
-          </h2>
-          <p class="text-muted leading-relaxed">
-            Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web.
-            Nos ayudan a recordar tus preferencias y mejorar tu experiencia de navegación en NeoCaoh.
-          </p>
-        </section>
-
-        <!-- Types of cookies we use -->
-        <section class="bg-panel border border-white/10 rounded-xl p-8">
-          <h2 class="font-display font-bold text-2xl text-white mb-6 flex items-center gap-3">
-            <span class="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center text-sm">⚙️</span>
-            Tipos de cookies que utilizamos
-          </h2>
-
-          <div class="grid gap-6">
-            <!-- Essential cookies -->
-            <div class="border border-white/5 rounded-lg p-6">
-              <h3 class="font-bold text-white mb-2 flex items-center gap-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                Cookies Esenciales
-              </h3>
-              <p class="text-muted mb-3">
-                Necesarias para el funcionamiento básico del sitio. No se pueden desactivar.
-              </p>
-              <ul class="text-sm text-muted/80 space-y-1 ml-4">
-                <li>• Configuración de cookies aceptadas</li>
-                <li>• Estado de primera visita al sitio</li>
-                <li>• Preferencias de idioma</li>
-              </ul>
-            </div>
-
-            <!-- Functional cookies -->
-            <div class="border border-white/5 rounded-lg p-6">
-              <h3 class="font-bold text-white mb-2 flex items-center gap-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Cookies Funcionales
-              </h3>
-              <p class="text-muted mb-3">
-                Mejoran la funcionalidad y personalización del sitio.
-              </p>
-              <ul class="text-sm text-muted/80 space-y-1 ml-4">
-                <li>• Preferencias de tema (modo claro/oscuro)</li>
-                <li>• Configuración de la interfaz de usuario</li>
-                <li>• Datos de sesión del simulador</li>
-              </ul>
-            </div>
-
-            <!-- Analytics cookies -->
-            <div class="border border-white/5 rounded-lg p-6">
-              <h3 class="font-bold text-white mb-2 flex items-center gap-2">
-                <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
-                Cookies de Análisis
-              </h3>
-              <p class="text-muted mb-3">
-                Nos ayudan a entender cómo los usuarios interactúan con el sitio.
-              </p>
-              <ul class="text-sm text-muted/80 space-y-1 ml-4">
-                <li>• Estadísticas de uso anónimas</li>
-                <li>• Páginas más visitadas</li>
-                <li>• Tiempo de permanencia en el sitio</li>
-              </ul>
-            </div>
+    <section class="px-6 md:px-[6vw] pt-16 pb-28">
+      <div class="max-w-[1100px] mx-auto space-y-16">
+        <!-- Qué son -->
+        <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+          <span class="w-16 h-16 rounded-2xl bg-panel text-aqua grid place-items-center">
+            <AppIcon name="cookie" class="w-8 h-8" />
+          </span>
+          <div>
+            <h2 class="font-display font-black italic uppercase text-4xl leading-none">¿Qué son las cookies?</h2>
+            <p class="mt-4 text-white/70 leading-relaxed max-w-[680px]">
+              Las cookies son pequeños archivos de texto que se guardan en tu dispositivo cuando visitas un sitio web.
+              Nos ayudan a recordar tus preferencias y mejorar tu experiencia de navegación en NeoCaoh.
+            </p>
           </div>
-        </section>
+        </div>
 
-        <!-- Cookie management -->
-        <section class="bg-panel border border-white/10 rounded-xl p-8">
-          <h2 class="font-display font-bold text-2xl text-white mb-4 flex items-center gap-3">
-            <span class="w-8 h-8 bg-gold rounded-lg flex items-center justify-center text-sm">🔧</span>
-            Gestión de cookies
-          </h2>
-          <p class="text-muted leading-relaxed mb-6">
-            Puedes controlar y gestionar las cookies de diferentes maneras:
-          </p>
-
-          <div class="space-y-4">
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-scarlet/20 rounded-full flex items-center justify-center mt-0.5">
-                <span class="text-scarlet text-sm">1</span>
-              </div>
-              <div>
-                <p class="text-white font-medium mb-1">En este sitio web</p>
-                <p class="text-sm text-muted">Puedes cambiar tus preferencias de cookies en cualquier momento haciendo clic en "Configurar cookies" en el pie de página.</p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-scarlet/20 rounded-full flex items-center justify-center mt-0.5">
-                <span class="text-scarlet text-sm">2</span>
-              </div>
-              <div>
-                <p class="text-white font-medium mb-1">En tu navegador</p>
-                <p class="text-sm text-muted">Puedes configurar tu navegador para bloquear o eliminar cookies. Consulta la ayuda de tu navegador para más información.</p>
-              </div>
-            </div>
+        <!-- Tipos -->
+        <div>
+          <h2 class="font-display font-black italic uppercase text-4xl leading-none mb-8">Tipos que utilizamos</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <article v-for="t in types" :key="t.name" class="rounded-[26px] p-7" :class="t.tone">
+              <span class="inline-block px-3 py-1 rounded-full bg-black/10 font-display font-bold uppercase tracking-[0.18em] text-[0.68rem]">
+                {{ t.tag }}
+              </span>
+              <h3 class="font-display font-black italic uppercase text-3xl leading-none mt-5">{{ t.name }}</h3>
+              <p class="mt-3 text-sm leading-relaxed opacity-75">{{ t.desc }}</p>
+              <ul class="mt-5 space-y-2 list-none text-sm">
+                <li v-for="item in t.items" :key="item" class="flex gap-2.5">
+                  <AppIcon name="check" class="w-4 h-4 mt-0.5 shrink-0" />
+                  {{ item }}
+                </li>
+              </ul>
+            </article>
           </div>
+        </div>
 
-          <div class="mt-8 pt-6 border-t border-white/10">
-            <button class="bg-scarlet hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-              Configurar Cookies
+        <!-- Gestión -->
+        <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+          <span class="w-16 h-16 rounded-2xl bg-panel text-aqua grid place-items-center">
+            <AppIcon name="gear" class="w-8 h-8" />
+          </span>
+          <div>
+            <h2 class="font-display font-black italic uppercase text-4xl leading-none">Gestión de cookies</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-6">
+              <div class="rounded-2xl bg-panel p-6">
+                <span class="font-display font-black italic text-4xl text-aqua">01</span>
+                <h3 class="font-display font-bold uppercase tracking-[0.06em] text-lg mt-2">En este sitio</h3>
+                <p class="mt-2 text-sm text-white/60 leading-relaxed">
+                  Cambia tus preferencias cuando quieras con "Configurar cookies" en el pie de página.
+                </p>
+              </div>
+              <div class="rounded-2xl bg-panel p-6">
+                <span class="font-display font-black italic text-4xl text-aqua">02</span>
+                <h3 class="font-display font-bold uppercase tracking-[0.06em] text-lg mt-2">En tu navegador</h3>
+                <p class="mt-2 text-sm text-white/60 leading-relaxed">
+                  Puedes bloquear o eliminar cookies desde la configuración de tu navegador.
+                </p>
+              </div>
+            </div>
+            <button type="button" class="btn-primary mt-6" @click="configureCookies">
+              <AppIcon name="gear" class="w-4 h-4" />
+              Configurar cookies
             </button>
           </div>
-        </section>
+        </div>
 
-        <!-- Contact -->
-        <section class="bg-panel border border-white/10 rounded-xl p-8">
-          <h2 class="font-display font-bold text-2xl text-white mb-4 flex items-center gap-3">
-            <span class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm">💬</span>
-            ¿Tienes preguntas?
-          </h2>
-          <p class="text-muted leading-relaxed mb-4">
-            Si tienes alguna pregunta sobre nuestra política de cookies, no dudes en contactarnos.
-          </p>
-          <div class="flex gap-4">
-            <NuxtLink to="/contacto"
-                      class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline">
-              Contactar
-            </NuxtLink>
-            <NuxtLink to="/terminos"
-                      class="border border-white/20 hover:bg-white/5 text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline">
-              Términos y Condiciones
-            </NuxtLink>
+        <!-- Preguntas -->
+        <div class="rounded-[26px] bg-indigo p-7 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex items-start gap-4">
+            <span class="w-12 h-12 rounded-2xl bg-night text-aqua grid place-items-center shrink-0">
+              <AppIcon name="chat" class="w-6 h-6" />
+            </span>
+            <div>
+              <h2 class="font-display font-black italic uppercase text-3xl leading-none">¿Tienes preguntas?</h2>
+              <p class="mt-2 text-white/75">Si tienes dudas sobre nuestra política de cookies, escríbenos.</p>
+            </div>
           </div>
-        </section>
+          <div class="flex flex-wrap gap-3">
+            <NuxtLink to="/contacto" class="btn-dark">Contactar</NuxtLink>
+            <NuxtLink to="/terminos" class="btn-outline">Términos</NuxtLink>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>

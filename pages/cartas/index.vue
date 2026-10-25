@@ -142,42 +142,25 @@ function setFilter(key: EnergyType | "all") {
 
 // ── Animaciones de entrada / scroll ────────────────────
 const root = ref<HTMLElement | null>(null);
+const heroRef = ref<HTMLElement | null>(null);
+const introPending = usePageIntro(heroRef, (tl, q) => {
+  tl.fromTo(
+    q(".hx-card"),
+    { y: 80, rotationY: 25, rotationZ: 6, autoAlpha: 0 },
+    { y: 0, rotationY: 0, rotationZ: 0, autoAlpha: 1, duration: 1.3, ease: "power4.out" },
+    0.1,
+  ).fromTo(
+    q(".thumb"),
+    { y: 30, autoAlpha: 0 },
+    { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.04 },
+    "-=0.9",
+  );
+});
 
 useGsap((mm) => {
   gsap.registerPlugin(Flip);
 
   mm.add(MOTION_OK, () => {
-    gsap
-      .timeline({ delay: 0.2 })
-      .from(".hx-line > span", {
-        yPercent: 110,
-        duration: 0.9,
-        stagger: 0.08,
-        ease: "power4.out",
-      })
-      .from(
-        ".hx-fade",
-        { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.06, ease: "power3.out" },
-        "-=0.6",
-      )
-      .from(
-        ".hx-card",
-        {
-          y: 80,
-          rotationY: 25,
-          rotationZ: 6,
-          autoAlpha: 0,
-          duration: 1.2,
-          ease: "power4.out",
-        },
-        0.1,
-      )
-      .from(
-        ".thumb",
-        { y: 30, autoAlpha: 0, duration: 0.5, stagger: 0.04, ease: "power3.out" },
-        "-=0.8",
-      );
-
     gsap.to(".hx-ghost", {
       xPercent: -15,
       ease: "none",
@@ -235,6 +218,8 @@ const nameSize = computed(() => {
   <div ref="root" class="bg-night">
     <!-- ═══ Ficha principal (clara) ═══ -->
     <section
+      ref="heroRef"
+      :class="{ 'intro-pending': introPending }"
       class="hx relative bg-paper text-night overflow-hidden pt-32 md:pt-36 pb-[calc(8vw+3rem)]"
     >
       <span
@@ -257,37 +242,37 @@ const nameSize = computed(() => {
       >
         <!-- Datos -->
         <div class="order-2 lg:order-1">
-          <p class="hx-fade eyebrow-wide text-night/45 mb-5">
+          <p class="hx-fade ix-fade eyebrow-wide text-night/45 mb-5">
             {{ current.set }} archives
           </p>
 
           <div class="flex items-stretch gap-3 md:gap-4">
-            <span class="hx-fade bracket-num text-night/70 self-center">
+            <span class="hx-fade ix-fade bracket-num text-night/70 self-center">
               {{ paddedNumber }}
             </span>
-            <span class="hx-fade stripes w-5 md:w-7 shrink-0 text-night" aria-hidden="true" />
+            <span class="hx-fade ix-fade stripes w-5 md:w-7 shrink-0 text-night" aria-hidden="true" />
             <h1
               class="font-display font-black italic uppercase leading-[0.9] tracking-[-0.01em]"
               :style="{ fontSize: nameSize }"
             >
-              <span class="hx-line block overflow-hidden py-[0.04em]">
+              <span class="hx-line ix-line block overflow-hidden py-[0.04em]">
                 <span class="block">{{ current.name }}</span>
               </span>
             </h1>
           </div>
 
-          <p class="hx-fade mt-6 font-display font-bold text-sm tracking-[0.12em] uppercase text-indigo">
+          <p class="hx-fade ix-fade mt-6 font-display font-bold text-sm tracking-[0.12em] uppercase text-indigo">
             {{ current.species }}
             <span class="text-night/30 mx-2">/</span>
             Nv. {{ current.level }}
             <span class="text-night/30 mx-2">/</span>
             Nº {{ current.dex }}
           </p>
-          <p class="hx-fade mt-4 max-w-[480px] text-night/70 leading-relaxed">
+          <p class="hx-fade ix-fade mt-4 max-w-[480px] text-night/70 leading-relaxed">
             {{ current.flavor }}
           </p>
 
-          <div class="hx-fade flex flex-wrap gap-2 mt-7">
+          <div class="hx-fade ix-fade flex flex-wrap gap-2 mt-7">
             <span
               class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-white font-display font-bold text-sm"
             >
@@ -305,7 +290,7 @@ const nameSize = computed(() => {
             </span>
           </div>
 
-          <div class="hx-fade flex flex-wrap items-center gap-3 mt-9">
+          <div class="hx-fade ix-fade flex flex-wrap items-center gap-3 mt-9">
             <a href="#ataques" class="btn-dark">Ver ataques</a>
             <div class="flex gap-2">
               <button
@@ -314,7 +299,7 @@ const nameSize = computed(() => {
                 aria-label="Carta anterior"
                 @click="step(-1)"
               >
-                ←
+                <AppIcon name="arrow-left" class="w-5 h-5" />
               </button>
               <button
                 type="button"
@@ -322,7 +307,7 @@ const nameSize = computed(() => {
                 aria-label="Carta siguiente"
                 @click="step(1)"
               >
-                →
+                <AppIcon name="arrow-right" class="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -330,7 +315,7 @@ const nameSize = computed(() => {
 
         <!-- Carta -->
         <div class="order-1 lg:order-2 flex justify-center [perspective:1200px]">
-          <CardTilt class="hx-card w-[min(78vw,400px)] rounded-[18px]" :max="10">
+          <CardTilt class="hx-card ix-hide w-[min(78vw,400px)] rounded-[18px]" :max="10">
             <img
               :src="current.image"
               :alt="`Carta ${current.name} ${current.number}`"
@@ -347,7 +332,7 @@ const nameSize = computed(() => {
             v-for="c in cards"
             :key="c.slug"
             type="button"
-            class="thumb shrink-0 w-[68px] md:w-[78px] rounded-lg overflow-hidden ring-offset-2 ring-offset-paper transition-all duration-300"
+            class="thumb ix-hide shrink-0 w-[68px] md:w-[78px] rounded-lg overflow-hidden ring-offset-2 ring-offset-paper transition-all duration-300"
             :class="
               c.slug === current.slug
                 ? 'ring-[3px] ring-indigo -translate-y-1'

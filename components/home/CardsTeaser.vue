@@ -44,7 +44,7 @@ useGsap((mm) => {
         <h2 class="sec-head-big text-white">cards</h2>
       </div>
       <NuxtLink to="/cartas" class="btn-primary self-start md:self-auto">
-        Ver todas las cartas →
+        Ver todas las cartas <AppIcon name="arrow-right" class="w-4 h-4" />
       </NuxtLink>
     </div>
 

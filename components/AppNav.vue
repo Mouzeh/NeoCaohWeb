@@ -51,13 +51,6 @@ onMounted(() => {
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  gsap.from(navRef.value, {
-    yPercent: -140,
-    duration: 1,
-    ease: "power4.out",
-    delay: 0.2,
-  });
-
   // Oculta al bajar, muestra al subir
   hideTrigger = ScrollTrigger.create({
     start: 0,
@@ -176,6 +169,14 @@ watch(menuOpen, (open) => {
 
       <div class="flex items-center gap-2">
         <NuxtLink
+          to="/donar"
+          class="hidden lg:inline-flex items-center gap-2 h-10 px-4 rounded-full border border-white/15 text-white font-display font-bold text-[0.9rem] tracking-[0.1em] uppercase no-underline transition-colors hover:border-[#FF6B8B] hover:text-[#FF6B8B]"
+          :class="isActive('/donar') ? '!border-[#FF6B8B] !text-[#FF6B8B]' : ''"
+        >
+          <AppIcon name="heart" class="w-4 h-4" />
+          Donar
+        </NuxtLink>
+        <NuxtLink
           to="/play"
           class="hidden sm:inline-flex items-center gap-2 h-10 px-5 rounded-full bg-aqua text-night font-display font-extrabold text-[0.9rem] tracking-[0.1em] uppercase no-underline transition-colors hover:bg-white"
         >
@@ -223,7 +224,10 @@ watch(menuOpen, (open) => {
         </NuxtLink>
       </li>
     </ul>
-    <NuxtLink to="/play" class="btn-primary relative w-full">▶ Jugar en web</NuxtLink>
+    <div class="relative grid grid-cols-2 gap-3">
+      <NuxtLink to="/donar" class="btn-outline w-full"><AppIcon name="heart" class="w-4 h-4" /> Donar</NuxtLink>
+      <NuxtLink to="/play" class="btn-primary w-full"><AppIcon name="play" class="w-4 h-4" /> Jugar</NuxtLink>
+    </div>
   </div>
 </template>
 

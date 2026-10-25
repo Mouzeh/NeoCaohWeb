@@ -30,6 +30,7 @@ export default defineNuxtConfig({
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "theme-color", content: "#5541D4" },
         {
           name: "description",
           content:
@@ -42,6 +43,10 @@ export default defineNuxtConfig({
         },
       ],
       link: [
+        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/site.webmanifest" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "stylesheet",

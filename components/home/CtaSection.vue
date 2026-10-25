@@ -67,7 +67,7 @@ useGsap((mm) => {
           macOS y Linux. Solo tú, tu mazo y tu rival.
         </p>
         <div class="cta-fade flex flex-wrap gap-3">
-          <NuxtLink to="/play" class="btn-dark">▶ Jugar en web</NuxtLink>
+          <NuxtLink to="/play" class="btn-dark"><AppIcon name="play" class="w-4 h-4" /> Jugar en web</NuxtLink>
           <NuxtLink to="/descargar" class="btn-outline-dark">Descargar</NuxtLink>
         </div>
       </div>

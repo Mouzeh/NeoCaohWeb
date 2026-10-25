@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isEnglish = ref(true)
+const isEnglish = ref(false)
 
 const toggleLanguage = () => {
   isEnglish.value = !isEnglish.value
@@ -209,229 +209,113 @@ const content = computed(() => ({
 }))
 
 const currentContent = computed(() => isEnglish.value ? content.value.en : content.value.es)
+
+useSeoMeta({ title: 'Términos y condiciones — NeoCaoh' })
+
+// Secciones numeradas (todas menos el reconocimiento final)
+const sectionList = computed(() =>
+  Object.entries(currentContent.value.sections)
+    .filter(([key]) => key !== 'acknowledgment')
+    .map(([key, sec]) => ({ key, ...(sec as any) }))
+)
 </script>
 
 <template>
-  <div class="min-h-screen bg-ink text-white">
-    <!-- Language Toggle -->
-    <div class="fixed top-20 right-6 z-50">
+  <div class="bg-night text-white min-h-screen">
+    <PageHero
+      sub="Legal"
+      big="terms"
+      :title="[currentContent.title, currentContent.titleHighlight]"
+      :description="currentContent.subtitle"
+    >
       <button
+        type="button"
+        class="btn-outline !py-3 !px-6"
         @click="toggleLanguage"
-        class="bg-gradient-to-r from-panel/90 to-ink2/90 border-2 border-gold/20 rounded-full px-5 py-3 text-sm font-mono tracking-wide text-white hover:text-gold hover:border-gold/50 hover:scale-105 transition-all duration-300 backdrop-blur-md shadow-lg hover:shadow-xl"
       >
-        <span class="flex items-center gap-2">
-          {{ isEnglish ? '🇪🇸 Español' : '🇺🇸 English' }}
-          <svg class="w-3 h-3 transition-transform duration-200" :class="{ 'rotate-180': !isEnglish }" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </span>
+        <AppIcon name="language" class="w-4 h-4" />
+        {{ isEnglish ? 'Ver en español' : 'Read in English' }}
       </button>
-    </div>
+    </PageHero>
 
-    <!-- Hero Section -->
-    <section class="relative px-[5vw] py-24 bg-gradient-to-br from-ink via-ink2 to-ink overflow-hidden">
-      <!-- Background Effects -->
-      <div class="absolute inset-0 opacity-[0.03]">
-        <div class="orb orb-1 absolute rounded-full" style="width:400px;height:400px;background:rgba(245,200,66,0.8);top:10%;left:-10%;filter:blur(80px)" />
-        <div class="orb orb-2 absolute rounded-full" style="width:300px;height:300px;background:rgba(232,35,10,0.6);bottom:10%;right:-5%;filter:blur(60px)" />
-      </div>
+    <section class="px-6 md:px-[6vw] pt-16 pb-28">
+      <div class="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-12">
+        <!-- Índice -->
+        <nav class="hidden lg:block" aria-label="Índice">
+          <div class="sticky top-28">
+            <p class="font-display font-bold uppercase tracking-[0.25em] text-[0.72rem] text-white/40 mb-4">
+              {{ isEnglish ? 'Contents' : 'Índice' }}
+            </p>
+            <ul class="space-y-1 list-none">
+              <li v-for="sec in sectionList" :key="sec.key">
+                <a
+                  :href="`#${sec.key}`"
+                  class="block py-1.5 font-display font-bold text-white/60 no-underline hover:text-aqua transition-colors"
+                >{{ sec.title }}</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
 
-      <div class="relative z-10 max-w-4xl mx-auto text-center">
-        <div class="sec-label inline-flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-6">
-          <span class="w-6 h-px bg-gold"></span>
-          Legal
-          <span class="w-6 h-px bg-gold"></span>
-        </div>
-        <h1 class="font-display font-extrabold leading-[0.9] mb-6" style="font-size: clamp(2.5rem, 6vw, 4.5rem)">
-          {{ currentContent.title }} <span class="text-scarlet">{{ currentContent.titleHighlight }}</span>
-        </h1>
-        <p class="text-lg text-offwhite/70 max-w-2xl mx-auto leading-relaxed">
-          {{ currentContent.subtitle }}
-        </p>
-        <div class="mt-8 text-sm text-muted font-mono tracking-wider">
-          {{ currentContent.lastUpdated }} {{ new Date().toLocaleDateString(isEnglish ? 'en-US' : 'es-ES') }}
-        </div>
-      </div>
-    </section>
-
-    <!-- Content Section -->
-    <section class="px-[5vw] py-16 max-w-5xl mx-auto">
-      <div class="prose prose-lg prose-invert max-w-none">
-        <!-- Important Notice -->
-        <div class="bg-gradient-to-r from-scarlet/10 to-gold/10 border border-scarlet/20 rounded-2xl p-8 mb-12">
-          <div class="flex items-start gap-4">
-            <div class="w-8 h-8 bg-scarlet rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-              <span class="text-white text-lg">⚠</span>
-            </div>
+        <div class="max-w-[820px]">
+          <!-- Aviso importante -->
+          <div class="flex gap-5 rounded-[26px] bg-aqua text-night p-7 md:p-8 mb-14">
+            <span class="w-12 h-12 rounded-2xl bg-night text-aqua grid place-items-center shrink-0">
+              <AppIcon name="alert" class="w-6 h-6" />
+            </span>
             <div>
-              <h3 class="text-xl font-bold text-scarlet mb-3 m-0">{{ currentContent.importantNotice }}</h3>
-              <p class="text-offwhite/90 leading-relaxed m-0" v-html="currentContent.importantText.replace('DEBES', '<strong>DEBES</strong>').replace('MUST', '<strong>MUST</strong>')">
-              </p>
+              <h2 class="font-display font-black italic uppercase text-2xl md:text-3xl leading-none">
+                {{ currentContent.importantNotice }}
+              </h2>
+              <p class="mt-3 leading-relaxed text-night/80">{{ currentContent.importantText }}</p>
             </div>
           </div>
-        </div>
 
-        <!-- Terms Content -->
-        <div class="space-y-12">
-          <!-- Nature of Service -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.nature.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p v-html="currentContent.sections.nature.content.replace('simulación digital gratuita', '<strong>simulación digital gratuita</strong>').replace('free digital simulation', '<strong>free digital simulation</strong>')"></p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.nature.points" :key="point">{{ point }}</li>
+          <!-- Secciones -->
+          <article
+            v-for="sec in sectionList"
+            :id="sec.key"
+            :key="sec.key"
+            class="scroll-mt-28 py-10 border-t border-white/10 first:border-t-0 first:pt-0"
+          >
+            <h2 class="font-display font-black italic uppercase text-3xl md:text-4xl leading-none">
+              {{ sec.title }}
+            </h2>
+            <div class="mt-5 space-y-4 text-white/70 leading-relaxed">
+              <p v-if="sec.content">{{ sec.content }}</p>
+              <p v-if="sec.subcontent">{{ sec.subcontent }}</p>
+              <ul v-if="sec.points" class="space-y-2.5 list-none">
+                <li v-for="point in sec.points" :key="point" class="flex gap-3">
+                  <span class="mt-2 w-2 h-2 rotate-45 bg-aqua shrink-0" aria-hidden="true" />
+                  <span>{{ point }}</span>
+                </li>
               </ul>
-              <p class="bg-ink2/50 p-4 rounded-lg border-l-4 border-gold">
-                <strong>{{ isEnglish ? 'Important:' : 'Importante:' }}</strong> {{ currentContent.sections.nature.note }}
+              <p v-if="sec.note" class="rounded-2xl bg-panel p-5 border-l-4 border-aqua text-white/80">
+                {{ sec.note }}
               </p>
             </div>
           </article>
 
-          <!-- Eligibility -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.eligibility.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.eligibility.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.eligibility.points" :key="point" v-html="point.replace('Poseer físicamente', '<strong>Poseer físicamente</strong>').replace('Physically own', '<strong>Physically own</strong>')"></li>
-              </ul>
-            </div>
-          </article>
+          <!-- Reconocimiento -->
+          <div class="rounded-[26px] bg-indigo p-7 md:p-9 mt-6">
+            <h2 class="font-display font-black italic uppercase text-3xl leading-none">
+              {{ currentContent.sections.acknowledgment.title }}
+            </h2>
+            <p class="mt-4 text-white/80 leading-relaxed">{{ currentContent.sections.acknowledgment.content }}</p>
+          </div>
 
-          <!-- Intellectual Property -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.ip.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p v-html="currentContent.sections.ip.content.replace('The Pokémon Company, Nintendo, Game Freak y Creatures Inc.', '<strong>The Pokémon Company, Nintendo, Game Freak y Creatures Inc.</strong>').replace('The Pokémon Company, Nintendo, Game Freak and Creatures Inc.', '<strong>The Pokémon Company, Nintendo, Game Freak and Creatures Inc.</strong>')"></p>
-              <p v-html="currentContent.sections.ip.subcontent.replace('sin fines de lucro', '<strong>sin fines de lucro</strong>').replace('non-profit', '<strong>non-profit</strong>')"></p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.ip.points" :key="point">{{ point }}</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- User Conduct -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.conduct.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.conduct.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.conduct.points" :key="point">{{ point }}</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Limitation of Liability -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.liability.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.liability.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.liability.points" :key="point">{{ point }}</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Privacy and Data -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.privacy.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.privacy.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.privacy.points" :key="point">{{ point }}</li>
-              </ul>
-              <p>{{ currentContent.sections.privacy.note }}</p>
-            </div>
-          </article>
-
-          <!-- Modifications and Termination -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.modifications.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.modifications.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.modifications.points" :key="point">{{ point }}</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Contact and Support -->
-          <article>
-            <h2 class="text-2xl font-bold text-gold mb-6 border-b border-white/10 pb-3">{{ currentContent.sections.contact.title }}</h2>
-            <div class="space-y-4 text-offwhite/80 leading-relaxed">
-              <p>{{ currentContent.sections.contact.content }}</p>
-              <ul class="list-disc pl-6 space-y-2">
-                <li v-for="point in currentContent.sections.contact.points" :key="point">{{ point }}</li>
-              </ul>
-            </div>
-          </article>
-
-          <!-- Final Notice -->
-          <div class="bg-gradient-to-r from-violet2/10 to-sky/10 border border-violet2/20 rounded-2xl p-8 mt-16">
-            <div class="text-center">
-              <h3 class="text-xl font-bold text-violet2 mb-4">{{ currentContent.sections.acknowledgment.title }}</h3>
-              <p class="text-offwhite/90 leading-relaxed">
-                {{ currentContent.sections.acknowledgment.content }}
-              </p>
-              <div class="mt-6">
-                <NuxtLink to="/" class="btn-primary inline-flex items-center gap-2">
-                  <span>←</span> {{ currentContent.backToHome }}
-                </NuxtLink>
-              </div>
-            </div>
+          <div class="flex flex-wrap gap-3 mt-12">
+            <NuxtLink to="/" class="btn-outline">
+              <AppIcon name="arrow-left" class="w-4 h-4" />
+              {{ currentContent.backToHome }}
+            </NuxtLink>
+            <NuxtLink to="/cookies" class="btn-outline">
+              <AppIcon name="cookie" class="w-4 h-4" />
+              {{ isEnglish ? 'Cookie policy' : 'Política de cookies' }}
+            </NuxtLink>
           </div>
         </div>
       </div>
     </section>
   </div>
 </template>
-
-<style scoped>
-.sec-label {
-  animation: fadeIn 0.6s ease forwards;
-}
-
-.orb-1 {
-  animation: orbDrift 12s ease-in-out infinite;
-}
-
-.orb-2 {
-  animation: orbDrift 10s ease-in-out 2s infinite reverse;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes orbDrift {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(30px, -40px);
-  }
-}
-
-.prose h2 {
-  color: #F5C842;
-}
-
-.prose h3 {
-  color: #E8230A;
-}
-
-.prose strong {
-  color: #F5C842;
-}
-
-.prose ul li::marker {
-  color: #F5C842;
-}
-</style>

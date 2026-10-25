@@ -18,6 +18,7 @@ const adminData = ref({
     windows: "",
     mac: "",
     linux: "",
+    android: "",
     version: "",
   },
 });
@@ -41,12 +42,20 @@ const loadDownloads = async () => {
   try {
     const saved = await $fetch("/api/downloads");
     if (saved) {
-      adminData.value.downloads = saved;
+      adminData.value.downloads = {
+        windows: "",
+        mac: "",
+        linux: "",
+        android: "",
+        version: "",
+        ...saved,
+      };
     } else {
       adminData.value.downloads = {
         windows: "",
         mac: "",
         linux: "",
+        android: "",
         version: "",
       };
     }
@@ -214,7 +223,7 @@ const logout = () => {
   isAuthenticated.value = false;
   adminPass.value = ""; // Borramos la clave al salir
   loginForm.value = { username: "", password: "" };
-  adminData.value.downloads = { windows: "", mac: "", linux: "", version: "" };
+  adminData.value.downloads = { windows: "", mac: "", linux: "", android: "", version: "" };
   blogPosts.value = [];
 };
 </script>
@@ -393,6 +402,17 @@ const logout = () => {
                 >
                 <input
                   v-model="adminData.downloads.linux"
+                  type="url"
+                  class="w-full px-4 py-3 bg-ink/50 border border-white/10 rounded-lg text-white placeholder-muted focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all"
+                  placeholder="https://..."
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-white mb-2"
+                  >Android (APK)</label
+                >
+                <input
+                  v-model="adminData.downloads.android"
                   type="url"
                   class="w-full px-4 py-3 bg-ink/50 border border-white/10 rounded-lg text-white placeholder-muted focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all"
                   placeholder="https://..."

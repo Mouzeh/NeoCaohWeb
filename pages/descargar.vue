@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { SITE } from "~/data/site";
 
 useHead({ title: "Descargar — NeoCaoh" });
 
 const NuxtLinkComp = resolveComponent("NuxtLink");
 
-type OsKey = "web" | "windows" | "mac" | "linux";
+type OsKey = "web" | "windows" | "mac" | "linux" | "android";
 
 // 1. Datos dinámicos de la nube (links y versión)
 const apiData = ref<Record<string, string> | null>(null);
@@ -25,7 +26,8 @@ const detected = ref<OsKey | null>(null);
 onMounted(() => {
   fetchDownloads();
   const ua = navigator.userAgent;
-  if (/Android|iPhone|iPad/i.test(ua)) detected.value = "web";
+  if (/Android/i.test(ua)) detected.value = "android";
+  else if (/iPhone|iPad/i.test(ua)) detected.value = "web";
   else if (/Win/i.test(ua)) detected.value = "windows";
   else if (/Mac/i.test(ua)) detected.value = "mac";
   else if (/Linux/i.test(ua)) detected.value = "linux";
@@ -80,6 +82,15 @@ const platforms = computed(() => {
       link: links.linux,
       cta: "Descargar",
     },
+    {
+      key: "android" as OsKey,
+      os: "Android",
+      description: "Teléfonos y tablets Android. Instala el APK y juega desde tu móvil.",
+      version,
+      size: "APK",
+      link: links.android,
+      cta: "Descargar APK",
+    },
   ];
 });
 
@@ -98,7 +109,7 @@ const steps = [
   {
     icon: "unzip",
     title: "Extrae",
-    text: "Descomprime el ZIP donde prefieras con el explorador, 7-Zip o WinRAR.",
+    text: "Descomprime el ZIP donde prefieras. En Android, abre el APK y permite instalar desde esa fuente.",
   },
   {
     icon: "play",
@@ -138,35 +149,18 @@ const requirements = [
 
 // 4. Animaciones
 const root = ref<HTMLElement | null>(null);
+const heroRef = ref<HTMLElement | null>(null);
+const introPending = usePageIntro(heroRef, (tl, q) => {
+  tl.fromTo(
+    q(".dl-shot"),
+    { x: 120, rotate: 8, autoAlpha: 0 },
+    { x: 0, rotate: 0, autoAlpha: 1, duration: 1.4, stagger: 0.15, ease: "power4.out" },
+    0.2,
+  );
+});
 
 useGsap((mm) => {
   mm.add(MOTION_OK, () => {
-    gsap
-      .timeline({ delay: 0.15 })
-      .from(".dl-line > span", {
-        yPercent: 110,
-        duration: 0.9,
-        stagger: 0.08,
-        ease: "power4.out",
-      })
-      .from(
-        ".dl-fade",
-        { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" },
-        "-=0.6",
-      )
-      .from(
-        ".dl-shot",
-        {
-          x: 120,
-          rotate: 8,
-          autoAlpha: 0,
-          duration: 1.2,
-          stagger: 0.12,
-          ease: "power4.out",
-        },
-        0.1,
-      );
-
     gsap.to(".dl-shot-a", {
       yPercent: -12,
       ease: "none",
@@ -227,6 +221,8 @@ useGsap((mm) => {
   <div ref="root" class="bg-night text-white">
     <!-- ═══ Hero ═══ -->
     <section
+      ref="heroRef"
+      :class="{ 'intro-pending': introPending }"
       class="dl-hero relative bg-indigo overflow-hidden pt-36 md:pt-40 pb-[calc(7vw+5rem)] px-6 md:px-[6vw]"
     >
       <span class="stripes absolute left-0 bottom-0 w-[35%] h-[45%] text-white/[0.05]" aria-hidden="true" />
@@ -235,17 +231,17 @@ useGsap((mm) => {
 
       <div class="relative grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-14 items-center max-w-[1300px] mx-auto">
         <div>
-          <p class="dl-fade eyebrow-wide text-white/60 mb-5">Descarga · Gratis</p>
+          <p class="ix-fade eyebrow-wide text-white/60 mb-5">Descarga · Gratis</p>
           <h1
             class="font-display font-black italic uppercase leading-[0.86]"
             style="font-size: clamp(3.6rem, 9vw, 8.5rem)"
           >
-            <span class="dl-line block overflow-hidden pr-[0.08em]"><span class="block">Lleva el</span></span>
-            <span class="dl-line block overflow-hidden pr-[0.08em] text-aqua"><span class="block">juego contigo</span></span>
+            <span class="ix-line block overflow-hidden pr-[0.08em]"><span class="block">Lleva el</span></span>
+            <span class="ix-line block overflow-hidden pr-[0.08em] text-aqua"><span class="block">juego contigo</span></span>
           </h1>
 
           <p
-            class="dl-fade inline-block mt-6 -ml-1 bg-night font-display font-bold italic uppercase tracking-[0.12em] px-5 py-1.5 -skew-x-12"
+            class="ix-fade inline-block mt-6 -ml-1 bg-night font-display font-bold italic uppercase tracking-[0.12em] px-5 py-1.5 -skew-x-12"
           >
             <span class="flex items-center gap-2 skew-x-12">
               <span class="w-2 h-2 rounded-full bg-aqua animate-pulse" />
@@ -253,12 +249,12 @@ useGsap((mm) => {
             </span>
           </p>
 
-          <p class="dl-fade mt-6 max-w-[460px] text-white/75 leading-relaxed">
+          <p class="ix-fade mt-6 max-w-[460px] text-white/75 leading-relaxed">
             Es una versión temprana: puede haber bugs o funciones incompletas.
             Tu feedback en Discord nos ayuda a mejorarla.
           </p>
 
-          <div class="dl-fade flex flex-wrap items-center gap-3 mt-9">
+          <div class="ix-fade flex flex-wrap items-center gap-3 mt-9">
             <component
               :is="primary.internal ? NuxtLinkComp : 'a'"
               :to="primary.internal ? primary.link : undefined"
@@ -279,12 +275,12 @@ useGsap((mm) => {
           <img
             src="/imagenes del juego/mesas.png"
             alt=""
-            class="dl-shot dl-shot-a absolute right-0 top-0 w-[88%] rounded-[22px] border-4 border-night shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] rotate-[3deg]"
+            class="ix-hide dl-shot dl-shot-a absolute right-0 top-0 w-[88%] rounded-[22px] border-4 border-night shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] rotate-[3deg]"
           />
           <img
             src="/imagenes del juego/creacion de deck.png"
             alt=""
-            class="dl-shot dl-shot-b absolute left-0 bottom-0 w-[70%] rounded-[18px] border-4 border-aqua shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] -rotate-[4deg]"
+            class="ix-hide dl-shot dl-shot-b absolute left-0 bottom-0 w-[70%] rounded-[18px] border-4 border-aqua shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] -rotate-[4deg]"
           />
         </div>
       </div>
@@ -304,7 +300,7 @@ useGsap((mm) => {
           <h2 class="sec-head-big">download</h2>
         </div>
 
-        <div class="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="pf-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
           <article
             v-for="p in platforms"
             :key="p.key"
@@ -511,21 +507,18 @@ useGsap((mm) => {
             desarrollo te ayudan en Discord.
           </p>
         </div>
-        <div class="help-fade flex flex-wrap gap-3">
-          <a
-            href="https://discord.gg/BNpF4XQEkX"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-dark !pl-3"
-          >
+        <div class="help-fade flex flex-wrap gap-3 lg:max-w-[560px] lg:justify-end">
+          <a :href="SITE.discord" target="_blank" rel="noopener noreferrer" class="btn-dark !pl-3">
             <span class="w-10 h-10 rounded-full bg-[#5865F2] grid place-items-center text-white">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                  d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"
-                />
-              </svg>
+              <AppIcon name="discord" class="w-5 h-5" />
             </span>
             Unirme al Discord
+          </a>
+          <a :href="SITE.whatsapp" target="_blank" rel="noopener noreferrer" class="btn-dark !pl-3">
+            <span class="w-10 h-10 rounded-full bg-[#25D366] grid place-items-center text-white">
+              <AppIcon name="whatsapp" class="w-5 h-5" />
+            </span>
+            Grupo de WhatsApp
           </a>
           <NuxtLink to="/terminos" class="btn-outline-dark">Términos y condiciones</NuxtLink>
         </div>

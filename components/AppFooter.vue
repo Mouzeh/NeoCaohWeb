@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SITE } from '~/data/site'
+
 const configureCookies = () => {
   if (process.client && (window as any).showCookieSettings) {
     (window as any).showCookieSettings()
@@ -19,13 +21,14 @@ const cols = [
     head: 'Comunidad',
     links: [
       { label: 'Facebook',  to: 'https://www.facebook.com/profile.php?id=61586292251689', external: true },
-      { label: 'Discord',   to: 'https://discord.gg/BNpF4XQEkX', external: true },
-      { label: 'Instagram', to: '#', external: true },
+      { label: 'Discord',   to: SITE.discord, external: true },
+      { label: 'WhatsApp',  to: SITE.whatsapp, external: true },
     ],
   },
   {
     head: 'Proyecto',
     links: [
+      { label: 'Donar',     to: '/donar' },
       { label: 'Contacto',  to: '/contacto' },
       { label: 'Términos',  to: '/terminos' },
       { label: 'Cookies',   to: '/cookies' },
@@ -47,7 +50,7 @@ const cols = [
           El simulador TCG Pokémon de la comunidad hispana. Gratuito,
           competitivo y siempre en evolución.
         </p>
-        <NuxtLink to="/play" class="btn-primary mt-8 !py-3 !px-6">▶ Jugar ahora</NuxtLink>
+        <NuxtLink to="/play" class="btn-primary mt-8 !py-3 !px-6"><AppIcon name="play" class="w-4 h-4" /> Jugar ahora</NuxtLink>
       </div>
 
       <!-- Columnas -->

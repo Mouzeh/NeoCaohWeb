@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Logos de plataforma dibujados en SVG (heredan el color con currentColor)
-defineProps<{ os: "web" | "windows" | "mac" | "linux" }>();
+defineProps<{ os: "web" | "windows" | "mac" | "linux" | "android" }>();
 </script>
 
 <template>
@@ -30,6 +30,11 @@ defineProps<{ os: "web" | "windows" | "mac" | "linux" }>();
     <circle cx="13.4" cy="6.6" r=".55" fill="#100D26" />
     <path d="M10.3 8.6c.5-.5 1-.7 1.7-.7s1.2.2 1.7.7c-.4.7-1 1.1-1.7 1.1s-1.3-.4-1.7-1.1z" fill="#F5B12C" />
     <path d="M5.2 20.2c.9-.9 2.5-1.1 3.3-.3.6.6.4 1.6-.4 2-.9.5-2.5.3-3-.4-.2-.4-.2-.9.1-1.3zM18.8 20.2c-.9-.9-2.5-1.1-3.3-.3-.6.6-.4 1.6.4 2 .9.5 2.5.3 3-.4.2-.4.2-.9-.1-1.3z" fill="#F5B12C" />
+  </svg>
+
+  <!-- Android: robot -->
+  <svg v-else-if="os === 'android'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.22a11.4 11.4 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25A1.25 1.25 0 1 1 8.25 14 1.25 1.25 0 0 1 7 15.25zm10 0A1.25 1.25 0 1 1 18.25 14 1.25 1.25 0 0 1 17 15.25z" />
   </svg>
 
   <!-- Web: globo -->

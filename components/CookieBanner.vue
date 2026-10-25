@@ -66,6 +66,23 @@ const savePreferences = () => {
   }
 }
 
+const optional = [
+  {
+    key: 'functional' as const,
+    icon: 'gear' as const,
+    name: 'Funcionales',
+    hint: 'Mejoran la experiencia',
+    desc: 'Recuerdan tus preferencias de interfaz, configuraciones de juego y personalización.',
+  },
+  {
+    key: 'analytics' as const,
+    icon: 'chart' as const,
+    name: 'De análisis',
+    hint: 'Nos ayudan a mejorar',
+    desc: 'Información anónima sobre cómo usas el sitio. No incluyen datos personales identificables.',
+  },
+]
+
 // Expose function to show settings (can be called from footer)
 const showCookieSettings = () => {
   showSettings.value = true
@@ -78,163 +95,121 @@ if (process.client) {
 </script>
 
 <template>
-  <!-- Cookie Banner -->
+  <!-- Banner -->
   <Transition name="cookie-slide" appear>
-    <div v-if="showBanner"
-         class="fixed bottom-0 left-0 right-0 z-[900] p-4 md:p-6">
-      <div class="max-w-4xl mx-auto">
-        <div class="bg-panel/90 backdrop-blur-md border border-white/10 rounded-lg p-4 shadow-lg">
-          <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-            <!-- Content -->
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-lg">🍪</span>
-                <div>
-                  <p class="text-white text-sm leading-relaxed">
-                    Utilizamos cookies para mejorar tu experiencia.
-                    <NuxtLink to="/cookies" class="text-gold hover:text-yellow-300 underline">Más información</NuxtLink>
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Actions -->
-            <div class="flex gap-2">
-              <button @click="showSettings = true"
-                      class="px-4 py-2 text-xs border border-white/20 rounded text-muted hover:text-white hover:bg-white/5 transition-colors">
-                Configurar
-              </button>
-              <button @click="acceptAll"
-                      class="px-4 py-2 text-xs bg-gold hover:bg-yellow-500 rounded text-ink font-medium transition-colors">
-                Aceptar
-              </button>
-            </div>
-          </div>
+    <div v-if="showBanner" class="fixed bottom-0 inset-x-0 z-[900] p-3 md:p-5 pointer-events-none">
+      <div
+        class="pointer-events-auto max-w-[860px] mx-auto flex flex-col sm:flex-row sm:items-center gap-4 rounded-[22px] bg-night/95 backdrop-blur-md border border-white/10 p-4 pl-5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)]"
+      >
+        <div class="flex items-center gap-3 flex-1">
+          <span class="w-10 h-10 rounded-xl bg-indigo text-aqua grid place-items-center shrink-0">
+            <AppIcon name="cookie" class="w-5 h-5" />
+          </span>
+          <p class="text-sm text-white/80 leading-relaxed">
+            Usamos cookies para mejorar tu experiencia.
+            <NuxtLink to="/cookies" class="text-aqua underline underline-offset-2">Más información</NuxtLink>
+          </p>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button
+            type="button"
+            class="h-10 px-4 rounded-full border border-white/20 font-display font-bold uppercase tracking-[0.1em] text-[0.8rem] text-white/80 hover:text-white hover:border-white/50 transition-colors"
+            @click="showSettings = true"
+          >
+            Configurar
+          </button>
+          <button
+            type="button"
+            class="h-10 px-5 rounded-full bg-aqua text-night font-display font-extrabold uppercase tracking-[0.1em] text-[0.8rem] hover:bg-white transition-colors"
+            @click="acceptAll"
+          >
+            Aceptar
+          </button>
         </div>
       </div>
     </div>
   </Transition>
 
-  <!-- Cookie Settings Modal -->
+  <!-- Modal de configuración -->
   <Transition name="modal-fade">
-    <div v-if="showSettings"
-         class="fixed inset-0 z-[950] flex items-center justify-center p-4">
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
-           @click="showSettings = false"></div>
+    <div v-if="showSettings" class="fixed inset-0 z-[950] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-night/80 backdrop-blur-sm" @click="showSettings = false" />
 
-      <!-- Modal -->
-      <div class="relative bg-panel border border-white/20 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="font-display font-bold text-2xl text-white">
-            Configuración de Cookies
+      <div
+        class="modal relative w-full max-w-[620px] max-h-[90vh] overflow-y-auto rounded-[28px] bg-panel border border-white/10 p-6 md:p-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cookie-title"
+      >
+        <div class="flex items-start justify-between gap-4 mb-6">
+          <h2 id="cookie-title" class="font-display font-black italic uppercase text-4xl leading-none text-white">
+            Configurar cookies
           </h2>
-          <button @click="showSettings = false"
-                  class="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-            <span class="text-xl">×</span>
+          <button
+            type="button"
+            class="w-10 h-10 rounded-full bg-white/[0.07] hover:bg-white/15 grid place-items-center shrink-0 transition-colors"
+            aria-label="Cerrar"
+            @click="showSettings = false"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
 
-        <div class="space-y-6">
-          <!-- Essential Cookies -->
-          <div class="border border-white/10 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-3">
+        <div class="space-y-3">
+          <!-- Esenciales -->
+          <div class="rounded-2xl bg-white/[0.04] p-5">
+            <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-green-400 text-sm">✓</span>
-                </div>
+                <span class="w-10 h-10 rounded-xl bg-aqua/15 text-aqua grid place-items-center">
+                  <AppIcon name="check" class="w-5 h-5" />
+                </span>
                 <div>
-                  <h3 class="font-bold text-white">Cookies Esenciales</h3>
-                  <p class="text-xs text-muted">Siempre activas</p>
+                  <h3 class="font-display font-bold uppercase tracking-[0.06em] text-white">Esenciales</h3>
+                  <p class="text-xs text-white/45">Siempre activas</p>
                 </div>
               </div>
-              <div class="w-12 h-6 bg-green-500 rounded-full flex items-center justify-end p-1">
-                <div class="w-4 h-4 bg-white rounded-full"></div>
-              </div>
+              <span class="w-12 h-7 rounded-full bg-aqua/60 flex items-center justify-end p-1" aria-hidden="true">
+                <span class="w-5 h-5 rounded-full bg-white" />
+              </span>
             </div>
-            <p class="text-sm text-muted">
-              Necesarias para el funcionamiento básico del sitio web. Incluyen navegación, acceso a áreas seguras y preferencias básicas.
+            <p class="mt-3 text-sm text-white/55">
+              Necesarias para el funcionamiento básico del sitio: navegación y preferencias básicas.
             </p>
           </div>
 
-          <!-- Functional Cookies -->
-          <div class="border border-white/10 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-3">
+          <!-- Opcionales -->
+          <div v-for="c in optional" :key="c.key" class="rounded-2xl bg-white/[0.04] p-5">
+            <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-blue-400 text-sm">⚙️</span>
-                </div>
+                <span class="w-10 h-10 rounded-xl bg-indigo/40 text-aqua grid place-items-center">
+                  <AppIcon :name="c.icon" class="w-5 h-5" />
+                </span>
                 <div>
-                  <h3 class="font-bold text-white">Cookies Funcionales</h3>
-                  <p class="text-xs text-muted">Mejoran la experiencia</p>
+                  <h3 class="font-display font-bold uppercase tracking-[0.06em] text-white">{{ c.name }}</h3>
+                  <p class="text-xs text-white/45">{{ c.hint }}</p>
                 </div>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" v-model="preferences.functional" class="sr-only">
-                <div :class="[
-                  'w-12 h-6 rounded-full transition-colors',
-                  preferences.functional ? 'bg-blue-500' : 'bg-gray-600'
-                ]">
-                  <div :class="[
-                    'w-4 h-4 bg-white rounded-full transition-transform duration-200',
-                    preferences.functional ? 'translate-x-7' : 'translate-x-1',
-                    'mt-1'
-                  ]"></div>
-                </div>
+              <label class="relative inline-flex cursor-pointer">
+                <input v-model="preferences[c.key]" type="checkbox" class="peer sr-only" />
+                <span
+                  class="w-12 h-7 rounded-full bg-white/15 p-1 flex transition-colors peer-checked:bg-aqua peer-focus-visible:ring-2 peer-focus-visible:ring-aqua"
+                >
+                  <span
+                    class="w-5 h-5 rounded-full bg-white transition-transform duration-200"
+                    :class="preferences[c.key] ? 'translate-x-5' : ''"
+                  />
+                </span>
+                <span class="sr-only">Activar cookies {{ c.name }}</span>
               </label>
             </div>
-            <p class="text-sm text-muted">
-              Permiten funcionalidades mejoradas como recordar tus preferencias de interfaz, configuraciones de juego y personalización.
-            </p>
-          </div>
-
-          <!-- Analytics Cookies -->
-          <div class="border border-white/10 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                  <span class="text-orange-400 text-sm">📊</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-white">Cookies de Análisis</h3>
-                  <p class="text-xs text-muted">Nos ayudan a mejorar</p>
-                </div>
-              </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" v-model="preferences.analytics" class="sr-only">
-                <div :class="[
-                  'w-12 h-6 rounded-full transition-colors',
-                  preferences.analytics ? 'bg-orange-500' : 'bg-gray-600'
-                ]">
-                  <div :class="[
-                    'w-4 h-4 bg-white rounded-full transition-transform duration-200',
-                    preferences.analytics ? 'translate-x-7' : 'translate-x-1',
-                    'mt-1'
-                  ]"></div>
-                </div>
-              </label>
-            </div>
-            <p class="text-sm text-muted">
-              Recopilan información anónima sobre cómo usas el sitio para ayudarnos a mejorarlo. No incluyen datos personales identificables.
-            </p>
+            <p class="mt-3 text-sm text-white/55">{{ c.desc }}</p>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-3 mt-8">
-          <button @click="rejectOptional"
-                  class="flex-1 px-6 py-3 border border-white/20 rounded-lg text-white hover:bg-white/5 transition-colors font-medium">
-            Rechazar Opcionales
-          </button>
-          <button @click="acceptSelected"
-                  class="flex-1 px-6 py-3 bg-violet-600 hover:bg-violet-700 rounded-lg text-white font-medium transition-colors">
-            Guardar Preferencias
-          </button>
-          <button @click="acceptAll"
-                  class="flex-1 px-6 py-3 bg-scarlet hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
-            Aceptar Todas
-          </button>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-7">
+          <button type="button" class="btn-outline !px-4 !py-3 !text-[0.8rem]" @click="rejectOptional">Rechazar opcionales</button>
+          <button type="button" class="btn-indigo !px-4 !py-3 !text-[0.8rem]" @click="acceptSelected">Guardar</button>
+          <button type="button" class="btn-primary !px-4 !py-3 !text-[0.8rem]" @click="acceptAll">Aceptar todas</button>
         </div>
       </div>
     </div>
@@ -244,41 +219,27 @@ if (process.client) {
 <style scoped>
 .cookie-slide-enter-active,
 .cookie-slide-leave-active {
-  transition: transform 0.4s ease-out, opacity 0.3s ease-out;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
 }
-
-.cookie-slide-enter-from {
-  transform: translateY(100%);
-  opacity: 0;
-}
-
+.cookie-slide-enter-from,
 .cookie-slide-leave-to {
-  transform: translateY(100%);
+  transform: translateY(110%);
   opacity: 0;
 }
-
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
 }
-
-.modal-fade-enter-active .relative,
-.modal-fade-leave-active .relative {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+.modal-fade-enter-active .modal,
+.modal-fade-leave-active .modal {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
-.modal-fade-enter-from .relative {
-  transform: scale(0.95);
-  opacity: 0;
-}
-
-.modal-fade-leave-to .relative {
-  transform: scale(0.95);
-  opacity: 0;
+.modal-fade-enter-from .modal,
+.modal-fade-leave-to .modal {
+  transform: translateY(24px) scale(0.97);
 }
 </style>

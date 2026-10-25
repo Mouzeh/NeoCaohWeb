@@ -1,7 +1,7 @@
 <script setup lang="ts">
-useSeoMeta({ title: 'Noticias — NeoCaoh', description: 'Últimas noticias y actualizaciones de NeoCaoh' })
+import gsap from 'gsap'
 
-const { activate } = useReveal()
+useSeoMeta({ title: 'Noticias — NeoCaoh', description: 'Últimas noticias y actualizaciones de NeoCaoh' })
 
 const { data: posts } = await useAsyncData('all-posts', () =>
   queryContent('blog').sort({ date: -1 }).find()
@@ -10,37 +10,50 @@ const { data: posts } = await useAsyncData('all-posts', () =>
 const featured = computed(() => posts.value?.[0])
 const rest     = computed(() => posts.value?.slice(1) ?? [])
 
-onMounted(() => activate())
+const root = ref<HTMLElement | null>(null)
+
+useGsap((mm) => {
+  mm.add(MOTION_OK, () => {
+    gsap.from('.post-item', {
+      y: 70,
+      autoAlpha: 0,
+      duration: 1,
+      stagger: 0.12,
+      ease: 'power4.out',
+      scrollTrigger: { trigger: root.value, start: 'top 85%' },
+    })
+  })
+}, root)
 </script>
 
 <template>
-  <div class="min-h-screen bg-ink pt-28 px-[5vw] pb-24">
-    <!-- Header -->
-    <div class="mb-16 reveal">
-      <div class="sec-label">Blog</div>
-      <h1 class="font-display font-extrabold text-white leading-[0.92]"
-          style="font-size: clamp(3rem, 7vw, 6rem)">
-        Noticias &<br><span class="text-lime">Updates</span>
-      </h1>
-    </div>
+  <div class="bg-night text-white min-h-screen">
+    <PageHero
+      sub="Blog"
+      big="news"
+      :title="['Noticias', 'y updates']"
+      description="Expansiones nuevas, versiones del juego y todo lo que pasa en la comunidad."
+    />
 
-    <!-- Featured post -->
-    <div v-if="featured" class="mb-10 reveal">
-      <BlogPostCard :post="featured" :featured="true" />
-    </div>
+    <section ref="root" class="px-6 md:px-[6vw] pt-16 pb-28">
+      <div class="max-w-[1300px] mx-auto">
+        <div v-if="featured" class="post-item mb-6">
+          <BlogPostCard :post="featured" featured />
+        </div>
 
-    <!-- Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <BlogPostCard
-        v-for="post in rest"
-        :key="post._path"
-        :post="post"
-        class="reveal"
-      />
-    </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <BlogPostCard
+            v-for="post in rest"
+            :key="post._path"
+            :post="post"
+            class="post-item"
+          />
+        </div>
 
-    <p v-if="!posts?.length" class="text-muted text-center py-20">
-      Aún no hay posts. ¡Vuelve pronto!
-    </p>
+        <p v-if="!posts?.length" class="text-white/50 text-center py-20">
+          Aún no hay posts. ¡Vuelve pronto!
+        </p>
+      </div>
+    </section>
   </div>
 </template>
