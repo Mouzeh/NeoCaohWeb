@@ -10,7 +10,12 @@ if (!post.value) throw createError({ statusCode: 404, message: 'Post no encontra
 useSeoMeta({
   title:       `${post.value.title} — NeoCaoh`,
   description: post.value.description,
-  ogImage:     post.value.image,
+  ogTitle:     post.value.title,
+  ogDescription: post.value.description,
+  // WhatsApp/Facebook exigen URL absoluta
+  ogImage:     post.value.image ? encodeURI(`https://www.neotcg.cl${post.value.image}`) : undefined,
+  ogType:      'article',
+  ogUrl:       `https://www.neotcg.cl${route.path}`,
 })
 
 const { data: others } = await useAsyncData(`post-others-${route.params.slug}`, () =>

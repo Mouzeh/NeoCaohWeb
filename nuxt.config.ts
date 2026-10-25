@@ -36,11 +36,25 @@ export default defineNuxtConfig({
           content:
             "NeoCaoh es el simulador Pokémon TCG de la comunidad hispana. Gratis, competitivo.",
         },
-        { property: "og:title", content: "NeoCaoh — Pokémon TCG Simulator" },
+        // Vista previa al compartir (WhatsApp, Facebook, X, Discord)
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "NeoCaoh" },
+        { property: "og:locale", content: "es_CL" },
+        { property: "og:url", content: "https://www.neotcg.cl/" },
+        { property: "og:title", content: "NeoCaoh — Un nuevo comienzo" },
         {
           property: "og:description",
-          content: "Construye tu mazo, desafía al mundo.",
+          content:
+            "El simulador Pokémon TCG de la comunidad hispana. Construye tu mazo y desafía al mundo, gratis.",
         },
+        { property: "og:image", content: "https://www.neotcg.cl/og-image.jpg" },
+        { property: "og:image:secure_url", content: "https://www.neotcg.cl/og-image.jpg" },
+        { property: "og:image:type", content: "image/jpeg" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: "NeoCaoh — Un nuevo comienzo. El simulador de la comunidad hispana" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: "https://www.neotcg.cl/og-image.jpg" },
       ],
       link: [
         { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
