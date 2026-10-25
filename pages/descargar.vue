@@ -2,7 +2,11 @@
 import gsap from "gsap";
 import { SITE } from "~/data/site";
 
-useHead({ title: "Descargar — NeoCaoh" });
+usePageSeo({
+  title: "Descargar NeoCaoh — Windows, Mac, Linux y Android",
+  description:
+    "Descarga gratis NeoCaoh, el simulador Pokémon TCG en español, para Windows, Mac, Linux y Android, o juega directo desde el navegador.",
+});
 
 const NuxtLinkComp = resolveComponent("NuxtLink");
 

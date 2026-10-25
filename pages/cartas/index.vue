@@ -4,15 +4,10 @@ import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cards, energyMeta, type Card, type EnergyType } from "~/data/cards";
 
-useHead({
-  title: "Cartas — NeoCaoh",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Archivo de cartas de NeoCaoh: PS, ataques, debilidades y más de las cartas de Neo Genesis.",
-    },
-  ],
+usePageSeo({
+  title: "Cartas Neo Genesis en español — NeoCaoh",
+  description:
+    "Archivo de cartas de NeoCaoh: PS, ataques, debilidades y más de las cartas de Neo Genesis.",
 });
 
 const route = useRoute();

@@ -4,7 +4,7 @@ import type { NuxtError } from "#app";
 const props = defineProps<{ error: NuxtError }>();
 const is404 = computed(() => props.error.statusCode === 404);
 
-useSeoMeta({ title: is404.value ? "Página no encontrada — NeoCaoh" : "Error — NeoCaoh" });
+useSeoMeta({ title: is404.value ? "Página no encontrada — NeoCaoh" : "Error — NeoCaoh", robots: "noindex" });
 
 const goHome = () => clearError({ redirect: "/" });
 </script>

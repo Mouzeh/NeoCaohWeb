@@ -2,7 +2,7 @@
 import gsap from "gsap";
 import { SITE } from "~/data/site";
 
-useSeoMeta({
+usePageSeo({
   title: "Contacto — NeoCaoh",
   description:
     "Contacta con el equipo de NeoCaoh TCG. Soporte, sugerencias y colaboración.",

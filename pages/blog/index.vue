@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import gsap from 'gsap'
 
-useSeoMeta({ title: 'Noticias — NeoCaoh', description: 'Últimas noticias y actualizaciones de NeoCaoh' })
+usePageSeo({ title: 'Noticias — NeoCaoh', description: 'Últimas noticias, expansiones y actualizaciones de NeoCaoh, el simulador Pokémon TCG en español.' })
 
 const { data: posts } = await useAsyncData('all-posts', () =>
   queryContent('blog').sort({ date: -1 }).find()

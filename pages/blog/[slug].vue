@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SITE } from '~/data/site'
+
 const route = useRoute()
 
 const { data: post } = await useAsyncData(`post-${route.params.slug}`, () =>
@@ -7,15 +9,35 @@ const { data: post } = await useAsyncData(`post-${route.params.slug}`, () =>
 
 if (!post.value) throw createError({ statusCode: 404, message: 'Post no encontrado' })
 
+const ogImage = post.value.image ? encodeURI(`${SITE.url}${post.value.image}`) : undefined
+
 useSeoMeta({
   title:       `${post.value.title} — NeoCaoh`,
   description: post.value.description,
   ogTitle:     post.value.title,
   ogDescription: post.value.description,
   // WhatsApp/Facebook exigen URL absoluta
-  ogImage:     post.value.image ? encodeURI(`https://www.neotcg.cl${post.value.image}`) : undefined,
+  ogImage,
   ogType:      'article',
-  ogUrl:       `https://www.neotcg.cl${route.path}`,
+  twitterImage: ogImage,
+})
+
+useHead({
+  script: [{
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.value.title,
+      description: post.value.description,
+      image: ogImage,
+      datePublished: post.value.date,
+      inLanguage: 'es',
+      mainEntityOfPage: `${SITE.url}${route.path}`,
+      author: { '@type': 'Organization', name: 'NeoCaoh', url: SITE.url },
+      publisher: { '@type': 'Organization', name: 'NeoCaoh', logo: { '@type': 'ImageObject', url: `${SITE.url}/icon-512.png` } },
+    }),
+  }],
 })
 
 const { data: others } = await useAsyncData(`post-others-${route.params.slug}`, () =>

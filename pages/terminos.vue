@@ -210,7 +210,10 @@ const content = computed(() => ({
 
 const currentContent = computed(() => isEnglish.value ? content.value.en : content.value.es)
 
-useSeoMeta({ title: 'Términos y condiciones — NeoCaoh' })
+usePageSeo({
+  title: 'Términos y condiciones — NeoCaoh',
+  description: 'Términos y condiciones de uso de NeoCaoh, el simulador Pokémon TCG de la comunidad hispana.',
+})
 
 // Secciones numeradas (todas menos el reconocimiento final)
 const sectionList = computed(() =>

@@ -1,0 +1,30 @@
+# NeoCaoh
+
+> NeoCaoh es un simulador gratuito de Pokémon TCG (juego de cartas coleccionables) hecho por y para la comunidad hispana. Permite armar mazos con las expansiones clásicas de la era Neo y jugar partidas online contra otros entrenadores, en español.
+
+- Idioma: español (comunidad hispana, con base en Chile)
+- Precio: gratis
+- Plataformas: navegador web, Windows, macOS, Linux y Android
+- Expansiones disponibles: Neo Genesis y Legendary Collection (más en camino: Neo Discovery, Neo Revelation, Neo Destiny, Southern Islands)
+- Funciones: constructor de mazos, partidas online, mesas, gimnasios, ranking e intercambio (GTS)
+- Proyecto de fans sin fines de lucro, financiado por donaciones. No está afiliado a Nintendo, Game Freak, Creatures ni The Pokémon Company.
+
+## Páginas principales
+
+- [Inicio](https://www.neotcg.cl/): qué es NeoCaoh y sus funciones
+- [Jugar ahora](https://www.neotcg.cl/play): abre el simulador en el navegador
+- [Descargar](https://www.neotcg.cl/descargar): instaladores para Windows, Mac, Linux y Android
+- [Cartas](https://www.neotcg.cl/cartas): archivo de cartas con PS, ataques, debilidades y resistencias
+- [Noticias](https://www.neotcg.cl/blog): expansiones nuevas y actualizaciones
+- [Donar](https://www.neotcg.cl/donar): cómo apoyar el proyecto
+- [Contacto](https://www.neotcg.cl/contacto): soporte y sugerencias (contacto@neotcg.cl)
+
+## Comunidad
+
+- [Discord](https://discord.gg/BNpF4XQEkX)
+- [Facebook](https://www.facebook.com/profile.php?id=61586292251689)
+
+## Legal
+
+- [Términos y condiciones](https://www.neotcg.cl/terminos)
+- [Política de cookies](https://www.neotcg.cl/cookies)

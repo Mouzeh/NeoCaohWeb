@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useSeoMeta({
+usePageSeo({
   title: 'Política de Cookies — NeoCaoh',
   description: 'Información sobre el uso de cookies en NeoCaoh, el simulador TCG Pokémon'
 })

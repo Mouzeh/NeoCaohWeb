@@ -1,0 +1,21 @@
+# NeoCaoh — www.neotcg.cl
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Buscadores e IAs bienvenidos (ChatGPT, Claude, Perplexity, Gemini, etc.)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.neotcg.cl/sitemap.xml

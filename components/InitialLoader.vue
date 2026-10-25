@@ -60,9 +60,9 @@ onMounted(() => {
       <!-- Logo and Loading -->
       <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
         <div class="logo-section text-center mb-8">
-          <h1 class="font-display font-extrabold text-[4rem] md:text-[6rem] tracking-[0.06em] text-white logo-glow">
+          <p class="font-display font-extrabold text-[4rem] md:text-[6rem] tracking-[0.06em] text-white logo-glow">
             NEO<span class="text-aqua">CAOH</span>
-          </h1>
+          </p>
           <p class="font-mono text-[0.9rem] tracking-[0.3em] uppercase text-gold/80 mt-4 typewriter">
             Pokémon TCG Simulator
           </p>

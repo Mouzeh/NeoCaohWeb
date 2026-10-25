@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useSeoMeta({
+usePageSeo({
   title: "Donar — NeoCaoh",
   description:
     "Apoya a NeoCaoh con una donación vía Cuenta RUT (Chile) o PayPal (internacional).",

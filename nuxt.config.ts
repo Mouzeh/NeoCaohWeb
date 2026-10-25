@@ -26,7 +26,8 @@ export default defineNuxtConfig({
   // Configuración del Head (SEO y Fuentes)
   app: {
     head: {
-      title: "NeoCaoh — Pokémon TCG Simulator",
+      htmlAttrs: { lang: "es" },
+      title: "NeoCaoh — Simulador Pokémon TCG gratis en español",
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -34,13 +35,12 @@ export default defineNuxtConfig({
         {
           name: "description",
           content:
-            "NeoCaoh es el simulador Pokémon TCG de la comunidad hispana. Gratis, competitivo.",
+            "NeoCaoh es el simulador Pokémon TCG gratis de la comunidad hispana. Juega online en español, arma tu mazo con las expansiones Neo y desafía a entrenadores de todo el mundo.",
         },
         // Vista previa al compartir (WhatsApp, Facebook, X, Discord)
         { property: "og:type", content: "website" },
         { property: "og:site_name", content: "NeoCaoh" },
         { property: "og:locale", content: "es_CL" },
-        { property: "og:url", content: "https://www.neotcg.cl/" },
         { property: "og:title", content: "NeoCaoh — Un nuevo comienzo" },
         {
           property: "og:description",

@@ -3,6 +3,8 @@ definePageMeta({
   layout: false,
 });
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 const isAuthenticated = ref(false);
 const adminPass = ref(""); // Guardamos la clave en memoria temporalmente
 const loginForm = ref({
