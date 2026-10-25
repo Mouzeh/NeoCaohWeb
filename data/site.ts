@@ -9,8 +9,8 @@ export const SITE = {
     rut: {
       bank: "BancoEstado",
       account: "Cuenta RUT",
-      number: "19476294",
-      rut: "19.476.294-1",
+      number: "19465294",
+      rut: "19.465.294-1",
     },
     paypal: {
       email: "rudyedgardo1997@gmail.com",
