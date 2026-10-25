@@ -5,8 +5,8 @@
 - Idioma: español (comunidad hispana, con base en Chile)
 - Precio: gratis
 - Plataformas: navegador web, Windows, macOS, Linux y Android
-- Expansiones disponibles: Neo Genesis y Legendary Collection (más en camino: Neo Discovery, Neo Revelation, Neo Destiny, Southern Islands)
-- Funciones: constructor de mazos, partidas online, mesas, gimnasios, ranking e intercambio (GTS)
+- Expansiones: era Neo (Neo Genesis, Neo Discovery, Neo Revelation, Neo Destiny) y Legendary Collection; más de 220 cartas
+- Funciones: partidas en tiempo real con árbitro digital, constructor de mazos, rankings, líderes de gimnasio e intercambio de cartas
 - Proyecto de fans sin fines de lucro, financiado por donaciones. No está afiliado a Nintendo, Game Freak, Creatures ni The Pokémon Company.
 
 ## Páginas principales
