@@ -90,20 +90,21 @@ function logout() {
         </div>
 
         <!-- Contraseña -->
-        <div class="rounded-[28px] bg-paper text-night p-7 md:p-8">
+        <div class="rounded-[28px] bg-panel p-7 md:p-8">
           <h2 class="font-display font-black italic uppercase text-3xl leading-none">Cambiar contraseña</h2>
+          <p class="mt-2 text-sm text-white/55">También cambia la del juego.</p>
           <form class="mt-6 space-y-4" @submit.prevent="changePassword">
-            <label class="block">
-              <span class="auth-label">Contraseña actual</span>
-              <input v-model="pw.current" type="password" required autocomplete="current-password" class="auth-field" />
-            </label>
-            <label class="block">
-              <span class="auth-label">Nueva contraseña</span>
-              <input v-model="pw.next" type="password" required minlength="4" autocomplete="new-password" class="auth-field" />
-            </label>
+            <div>
+              <label for="pw-current" class="auth-label">Contraseña actual</label>
+              <PasswordInput id="pw-current" v-model="pw.current" required autocomplete="current-password" />
+            </div>
+            <div>
+              <label for="pw-next" class="auth-label">Nueva contraseña</label>
+              <PasswordInput id="pw-next" v-model="pw.next" required minlength="4" autocomplete="new-password" />
+            </div>
             <p v-if="pwError" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ pwError }}</p>
-            <p v-if="pwInfo" class="flex items-center gap-2 text-sm text-night/70"><AppIcon name="check" class="w-4 h-4 text-indigo" />{{ pwInfo }}</p>
-            <button type="submit" class="btn-dark w-full" :disabled="pwLoading">{{ pwLoading ? "Guardando…" : "Guardar" }}</button>
+            <p v-if="pwInfo" class="auth-info" role="status"><AppIcon name="check" class="w-4 h-4 mt-0.5 shrink-0" />{{ pwInfo }}</p>
+            <button type="submit" class="btn-primary w-full" :disabled="pwLoading">{{ pwLoading ? "Guardando…" : "Cambiar contraseña" }}</button>
           </form>
         </div>
       </div>

@@ -16,6 +16,9 @@ const info = ref("");
 const loading = ref(false);
 const cooldown = ref(0);
 
+const steps = ["Tus datos", "Confirmar correo", "Listo"];
+const stepIndex = computed(() => ["form", "code", "done"].indexOf(step.value));
+
 let timer: ReturnType<typeof setInterval> | undefined;
 function startCooldown() {
   cooldown.value = 60;
@@ -77,119 +80,141 @@ function resend() {
 </script>
 
 <template>
-  <div class="bg-night text-white min-h-screen">
-    <PageHero
-      sub="Cuenta"
-      big="join"
-      :title="['Crea tu', 'cuenta']"
-      description="Una sola cuenta para la web, PC y Android. Si ya juegas, entra con el mismo usuario."
-    />
+  <AuthShell
+    big="join"
+    :title="['Crea tu', 'cuenta']"
+    description="Gratis, con mazo inicial incluido. Si ya juegas, entra con tu usuario de siempre."
+    :cards="[
+      '/frames/cartas/chikorita-neo-genesis-es-53.jpg',
+      '/frames/cartas/cyndaquil-neo-genesis-es-56.jpg',
+      '/frames/cartas/croconaw-neo-genesis-es-31.jpg',
+    ]"
+  >
+    <!-- Progreso -->
+    <ol class="grid grid-cols-3 gap-2 mb-10" aria-label="Progreso del registro">
+      <li
+        v-for="(label, i) in steps"
+        :key="label"
+        :aria-current="i === stepIndex ? 'step' : undefined"
+        class="text-xs"
+        :class="i <= stepIndex ? 'text-white' : 'text-white/40'"
+      >
+        <span
+          class="block h-1 rounded-full mb-2.5 transition-colors duration-500"
+          :class="i <= stepIndex ? 'bg-aqua' : 'bg-white/15'"
+        />
+        <span class="hidden sm:inline">Paso {{ i + 1 }}: </span>{{ label }}
+      </li>
+    </ol>
 
-    <section class="px-4 md:px-[6vw] pt-16 pb-28">
-      <div class="max-w-[560px] mx-auto rounded-[28px] bg-paper text-night p-7 md:p-10">
-        <!-- 1. Datos -->
-        <template v-if="step === 'form'">
-          <h2 class="font-display font-black italic uppercase text-4xl leading-none">Nuevo entrenador</h2>
-          <p class="mt-3 text-night/60">Recibirás un código en tu correo para confirmar la cuenta.</p>
+    <!-- 1. Datos -->
+    <template v-if="step === 'form'">
+      <h2 class="auth-title">Nuevo entrenador</h2>
+      <p class="auth-lead">
+        ¿Ya tienes cuenta? <NuxtLink to="/entrar" class="auth-link">Entrar</NuxtLink>
+      </p>
 
-          <form class="mt-8 space-y-5" @submit.prevent="submitForm">
-            <label class="block">
-              <span class="auth-label">Nombre de entrenador</span>
-              <input
-                v-model="form.username"
-                type="text"
-                required
-                minlength="3"
-                maxlength="20"
-                autocomplete="username"
-                class="auth-field"
-                placeholder="Así te verán en el juego"
-              />
-            </label>
-            <label class="block">
-              <span class="auth-label">Correo</span>
-              <input v-model="form.email" type="email" required autocomplete="email" class="auth-field" placeholder="tu@email.com" />
-            </label>
-            <div class="grid sm:grid-cols-2 gap-5">
-              <label class="block">
-                <span class="auth-label">Contraseña</span>
-                <input v-model="form.password" type="password" required minlength="4" autocomplete="new-password" class="auth-field" />
-              </label>
-              <label class="block">
-                <span class="auth-label">Repetir contraseña</span>
-                <input v-model="form.confirm" type="password" required minlength="4" autocomplete="new-password" class="auth-field" />
-              </label>
-            </div>
-
-            <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
-
-            <button type="submit" class="btn-dark w-full" :disabled="loading">
-              {{ loading ? "Enviando código…" : "Crear cuenta" }}
-            </button>
-            <p class="text-sm text-night/60 text-center">
-              ¿Ya tienes cuenta? <NuxtLink to="/entrar" class="auth-link">Entrar</NuxtLink>
-            </p>
-            <p class="text-xs text-night/45 text-center">
-              Al registrarte aceptas los <NuxtLink to="/terminos" class="underline">términos de uso</NuxtLink>.
-            </p>
-          </form>
-        </template>
-
-        <!-- 2. Código -->
-        <template v-else-if="step === 'code'">
-          <h2 class="font-display font-black italic uppercase text-4xl leading-none">Revisa tu correo</h2>
-          <p class="mt-3 text-night/60">
-            Enviamos un código de 6 dígitos a <strong class="text-night">{{ form.email }}</strong>. Expira en 10 minutos.
-            Si no llega, mira en spam.
-          </p>
-
-          <form class="mt-8 space-y-5" @submit.prevent="submitCode">
-            <label class="block">
-              <span class="auth-label">Código</span>
-              <input
-                v-model="code"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]{6}"
-                maxlength="6"
-                required
-                autocomplete="one-time-code"
-                class="auth-field text-center font-mono text-3xl tracking-[0.5em]"
-                placeholder="000000"
-              />
-            </label>
-
-            <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
-            <p v-if="info" class="flex items-center gap-2 text-sm text-night/70"><AppIcon name="check" class="w-4 h-4 text-indigo" />{{ info }}</p>
-
-            <button type="submit" class="btn-dark w-full" :disabled="loading || code.length < 6">
-              {{ loading ? "Verificando…" : "Confirmar" }}
-            </button>
-            <div class="flex flex-wrap justify-between gap-3">
-              <button type="button" class="auth-link" @click="step = 'form'; error = ''">← Cambiar datos</button>
-              <button type="button" class="auth-link disabled:opacity-40 disabled:no-underline" :disabled="loading || cooldown > 0" @click="resend">
-                {{ cooldown > 0 ? `Reenviar (${cooldown}s)` : "Reenviar código" }}
-              </button>
-            </div>
-          </form>
-        </template>
-
-        <!-- 3. Listo -->
-        <template v-else>
-          <span class="w-14 h-14 rounded-full bg-aqua grid place-items-center"><AppIcon name="check" class="w-7 h-7" /></span>
-          <h2 class="mt-6 font-display font-black italic uppercase text-4xl leading-none">
-            ¡Bienvenido, {{ account.player.value?.username }}!
-          </h2>
-          <p class="mt-3 text-night/60">
-            Tu cuenta está lista y ya tienes tu mazo inicial. Entra al juego con este mismo usuario y contraseña.
-          </p>
-          <div class="mt-8 grid sm:grid-cols-2 gap-3">
-            <NuxtLink to="/play" class="btn-dark w-full"><AppIcon name="play" class="w-4 h-4" /> Jugar en web</NuxtLink>
-            <NuxtLink to="/descargar" class="btn-outline-dark w-full">Descargar</NuxtLink>
+      <form class="mt-8 space-y-5" @submit.prevent="submitForm">
+        <div>
+          <label for="reg-user" class="auth-label">Nombre de entrenador</label>
+          <input
+            id="reg-user"
+            v-model="form.username"
+            type="text"
+            required
+            minlength="3"
+            maxlength="20"
+            autocomplete="username"
+            class="auth-field"
+            aria-describedby="reg-user-hint"
+          />
+          <p id="reg-user-hint" class="mt-2 text-xs text-white/45">Así te verán los demás jugadores. Entre 3 y 20 caracteres.</p>
+        </div>
+        <div>
+          <label for="reg-email" class="auth-label">Correo</label>
+          <input id="reg-email" v-model="form.email" type="email" required autocomplete="email" class="auth-field" placeholder="tu@email.com" />
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label for="reg-pass" class="auth-label">Contraseña</label>
+            <PasswordInput id="reg-pass" v-model="form.password" required minlength="4" autocomplete="new-password" />
           </div>
-          <p class="mt-6 text-center"><NuxtLink to="/cuenta" class="auth-link">Ver mi cuenta</NuxtLink></p>
-        </template>
+          <div>
+            <label for="reg-confirm" class="auth-label">Repetir contraseña</label>
+            <PasswordInput id="reg-confirm" v-model="form.confirm" required minlength="4" autocomplete="new-password" />
+          </div>
+        </div>
+
+        <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
+
+        <button type="submit" class="btn-primary w-full !mt-7" :disabled="loading">
+          {{ loading ? "Enviando código…" : "Crear cuenta" }}
+        </button>
+        <p class="text-xs text-white/45 text-center">
+          Al crear la cuenta aceptas los <NuxtLink to="/terminos" class="underline underline-offset-2 hover:text-white">términos de uso</NuxtLink>.
+        </p>
+      </form>
+    </template>
+
+    <!-- 2. Código -->
+    <template v-else-if="step === 'code'">
+      <h2 class="auth-title">Revisa tu correo</h2>
+      <p class="auth-lead">
+        Enviamos un código de 6 dígitos a <strong class="text-white font-medium break-all">{{ form.email }}</strong>.
+        Expira en 10 minutos; si no llega, mira en spam.
+      </p>
+
+      <form class="mt-8 space-y-5" @submit.prevent="submitCode">
+        <div>
+          <label for="reg-code" class="auth-label">Código</label>
+          <input
+            id="reg-code"
+            v-model="code"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            required
+            autocomplete="one-time-code"
+            class="auth-field auth-code"
+            placeholder="000000"
+          />
+        </div>
+
+        <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
+        <p v-if="info" class="auth-info" role="status"><AppIcon name="mail" class="w-4 h-4 mt-0.5 shrink-0" />{{ info }}</p>
+
+        <button type="submit" class="btn-primary w-full !mt-7" :disabled="loading || code.length < 6">
+          {{ loading ? "Verificando…" : "Confirmar correo" }}
+        </button>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <button type="button" class="auth-back !mb-0" @click="step = 'form'; error = ''">
+            <AppIcon name="arrow-left" class="w-4 h-4" />Cambiar datos
+          </button>
+          <button
+            type="button"
+            class="auth-link disabled:text-white/40 disabled:no-underline disabled:cursor-not-allowed"
+            :disabled="loading || cooldown > 0"
+            @click="resend"
+          >
+            {{ cooldown > 0 ? `Reenviar en ${cooldown}s` : "Reenviar código" }}
+          </button>
+        </div>
+      </form>
+    </template>
+
+    <!-- 3. Listo -->
+    <template v-else>
+      <span class="w-14 h-14 rounded-full bg-aqua text-night grid place-items-center"><AppIcon name="check" class="w-7 h-7" /></span>
+      <h2 class="auth-title mt-6 break-words">¡Bienvenido, {{ account.player.value?.username }}!</h2>
+      <p class="auth-lead">
+        Tu cuenta está lista y ya tienes tu mazo inicial. Entra al juego con este mismo usuario y contraseña.
+      </p>
+      <div class="mt-8 grid sm:grid-cols-2 gap-3">
+        <NuxtLink to="/play" class="btn-primary w-full"><AppIcon name="play" class="w-4 h-4" /> Jugar en web</NuxtLink>
+        <NuxtLink to="/descargar" class="btn-outline w-full">Descargar</NuxtLink>
       </div>
-    </section>
-  </div>
+      <p class="mt-6 text-center"><NuxtLink to="/cuenta" class="auth-link">Ver mi cuenta</NuxtLink></p>
+    </template>
+  </AuthShell>
 </template>

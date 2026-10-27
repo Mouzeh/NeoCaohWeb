@@ -65,85 +65,87 @@ function submitReset() {
 </script>
 
 <template>
-  <div class="bg-night text-white min-h-screen">
-    <PageHero
-      sub="Cuenta"
-      big="login"
-      :title="['Entra a tu', 'cuenta']"
-      description="Usa el mismo usuario y contraseña que en el juego."
-    />
+  <AuthShell
+    big="login"
+    :title="['Entra a tu', 'cuenta']"
+    description="Usa el mismo nombre de entrenador y contraseña que en el juego."
+    :cards="[
+      '/frames/cartas/ampharos-neo-genesis-es-1.jpg',
+      '/frames/cartas/typhlosion-neo-genesis-es-18.jpg',
+      '/frames/cartas/feraligatr-neo-genesis-es-4.jpg',
+    ]"
+  >
+    <!-- Login -->
+    <template v-if="step === 'login'">
+      <h2 class="auth-title">Entrar</h2>
+      <p class="auth-lead">
+        ¿Primera vez? <NuxtLink to="/registro" class="auth-link">Crea una cuenta gratis</NuxtLink>
+      </p>
+      <form class="mt-8 space-y-5" @submit.prevent="submitLogin">
+        <div>
+          <label for="login-user" class="auth-label">Nombre de entrenador</label>
+          <input id="login-user" v-model="username" type="text" required autocomplete="username" class="auth-field" />
+        </div>
+        <div>
+          <div class="flex items-baseline justify-between gap-3 mb-2">
+            <label for="login-pass" class="auth-label !mb-0">Contraseña</label>
+            <button type="button" class="auth-link" @click="go('forgot')">¿La olvidaste?</button>
+          </div>
+          <PasswordInput id="login-pass" v-model="password" required autocomplete="current-password" />
+        </div>
 
-    <section class="px-4 md:px-[6vw] pt-16 pb-28">
-      <div class="max-w-[520px] mx-auto rounded-[28px] bg-paper text-night p-7 md:p-10">
-        <!-- Login -->
-        <template v-if="step === 'login'">
-          <h2 class="font-display font-black italic uppercase text-4xl leading-none">Entrar</h2>
-          <form class="mt-8 space-y-5" @submit.prevent="submitLogin">
-            <label class="block">
-              <span class="auth-label">Nombre de entrenador</span>
-              <input v-model="username" type="text" required autocomplete="username" class="auth-field" />
-            </label>
-            <label class="block">
-              <span class="auth-label">Contraseña</span>
-              <input v-model="password" type="password" required autocomplete="current-password" class="auth-field" />
-            </label>
+        <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
+        <p v-if="info" class="auth-info" role="status"><AppIcon name="check" class="w-4 h-4 mt-0.5 shrink-0" />{{ info }}</p>
 
-            <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
-            <p v-if="info" class="flex items-center gap-2 text-sm text-night/70"><AppIcon name="check" class="w-4 h-4 text-indigo" />{{ info }}</p>
+        <button type="submit" class="btn-primary w-full !mt-7" :disabled="loading">{{ loading ? "Entrando…" : "Entrar" }}</button>
+      </form>
+    </template>
 
-            <button type="submit" class="btn-dark w-full" :disabled="loading">{{ loading ? "Entrando…" : "Entrar" }}</button>
-            <div class="flex flex-wrap justify-between gap-3">
-              <button type="button" class="auth-link" @click="go('forgot')">¿Olvidaste tu contraseña?</button>
-              <NuxtLink to="/registro" class="auth-link">Crear cuenta</NuxtLink>
-            </div>
-          </form>
-        </template>
+    <!-- Pedir código -->
+    <template v-else-if="step === 'forgot'">
+      <button type="button" class="auth-back" @click="go('login')"><AppIcon name="arrow-left" class="w-4 h-4" />Volver a entrar</button>
+      <h2 class="auth-title">Recuperar contraseña</h2>
+      <p class="auth-lead">Escribe el correo de tu cuenta y te enviaremos un código de 6 dígitos.</p>
+      <form class="mt-8 space-y-5" @submit.prevent="submitForgot">
+        <div>
+          <label for="forgot-email" class="auth-label">Correo</label>
+          <input id="forgot-email" v-model="email" type="email" required autocomplete="email" class="auth-field" placeholder="tu@email.com" />
+        </div>
+        <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
+        <button type="submit" class="btn-primary w-full !mt-7" :disabled="loading">{{ loading ? "Enviando…" : "Enviar código" }}</button>
+      </form>
+    </template>
 
-        <!-- Pedir código -->
-        <template v-else-if="step === 'forgot'">
-          <h2 class="font-display font-black italic uppercase text-4xl leading-none">Recuperar contraseña</h2>
-          <p class="mt-3 text-night/60">Escribe el correo de tu cuenta y te enviaremos un código.</p>
-          <form class="mt-8 space-y-5" @submit.prevent="submitForgot">
-            <label class="block">
-              <span class="auth-label">Correo</span>
-              <input v-model="email" type="email" required autocomplete="email" class="auth-field" placeholder="tu@email.com" />
-            </label>
-            <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
-            <button type="submit" class="btn-dark w-full" :disabled="loading">{{ loading ? "Enviando…" : "Enviar código" }}</button>
-            <button type="button" class="auth-link" @click="go('login')">← Volver</button>
-          </form>
-        </template>
-
-        <!-- Código + nueva contraseña -->
-        <template v-else>
-          <h2 class="font-display font-black italic uppercase text-4xl leading-none">Nueva contraseña</h2>
-          <p class="mt-3 text-night/60">Código enviado a <strong class="text-night">{{ email }}</strong>. Expira en 10 minutos.</p>
-          <form class="mt-8 space-y-5" @submit.prevent="submitReset">
-            <label class="block">
-              <span class="auth-label">Código</span>
-              <input
-                v-model="code"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]{6}"
-                maxlength="6"
-                required
-                autocomplete="one-time-code"
-                class="auth-field text-center font-mono text-3xl tracking-[0.5em]"
-                placeholder="000000"
-              />
-            </label>
-            <label class="block">
-              <span class="auth-label">Nueva contraseña</span>
-              <input v-model="newPassword" type="password" required minlength="4" autocomplete="new-password" class="auth-field" />
-            </label>
-            <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
-            <p v-if="info" class="flex items-center gap-2 text-sm text-night/70"><AppIcon name="check" class="w-4 h-4 text-indigo" />{{ info }}</p>
-            <button type="submit" class="btn-dark w-full" :disabled="loading">{{ loading ? "Guardando…" : "Cambiar contraseña" }}</button>
-            <button type="button" class="auth-link" @click="go('forgot')">← Pedir otro código</button>
-          </form>
-        </template>
-      </div>
-    </section>
-  </div>
+    <!-- Código + nueva contraseña -->
+    <template v-else>
+      <button type="button" class="auth-back" @click="go('forgot')"><AppIcon name="arrow-left" class="w-4 h-4" />Pedir otro código</button>
+      <h2 class="auth-title">Nueva contraseña</h2>
+      <p class="auth-lead">Código enviado a <strong class="text-white font-medium">{{ email }}</strong>. Expira en 10 minutos.</p>
+      <form class="mt-8 space-y-5" @submit.prevent="submitReset">
+        <p v-if="info" class="auth-info" role="status"><AppIcon name="mail" class="w-4 h-4 mt-0.5 shrink-0" />{{ info }}</p>
+        <div>
+          <label for="reset-code" class="auth-label">Código</label>
+          <input
+            id="reset-code"
+            v-model="code"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            required
+            autocomplete="one-time-code"
+            class="auth-field auth-code"
+            placeholder="000000"
+          />
+        </div>
+        <div>
+          <label for="reset-pass" class="auth-label">Nueva contraseña</label>
+          <PasswordInput id="reset-pass" v-model="newPassword" required minlength="4" autocomplete="new-password" />
+          <p class="mt-2 text-xs text-white/45">Mínimo 4 caracteres.</p>
+        </div>
+        <p v-if="error" class="auth-error" role="alert"><AppIcon name="alert" class="w-4 h-4 mt-0.5 shrink-0" />{{ error }}</p>
+        <button type="submit" class="btn-primary w-full !mt-7" :disabled="loading">{{ loading ? "Guardando…" : "Cambiar contraseña" }}</button>
+      </form>
+    </template>
+  </AuthShell>
 </template>

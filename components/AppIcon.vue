@@ -21,7 +21,9 @@ defineProps<{
     | "bank"
     | "android"
     | "globe"
-    | "language";
+    | "language"
+    | "eye"
+    | "eye-off";
 }>();
 </script>
 
@@ -147,6 +149,14 @@ defineProps<{
     <template v-else-if="name === 'language'">
       <path d="M4 5h8M8 3v2M10 5c-.7 3.8-2.8 6.6-6 8M6 9c1 1.8 2.6 3.2 4.5 4" />
       <path d="m12 21 4.5-10L21 21M13.5 18h6" />
+    </template>
+    <template v-else-if="name === 'eye'">
+      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </template>
+    <template v-else-if="name === 'eye-off'">
+      <path d="M9.9 5.2A9.6 9.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-2.6 3.5M6.3 6.3C3.6 8 2 12 2 12s3.6 7 10 7a9.5 9.5 0 0 0 5.7-1.8" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
     </template>
   </svg>
 </template>

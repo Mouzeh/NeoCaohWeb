@@ -133,18 +133,47 @@ body {
   .bracket-num::after  { @apply bottom-0 border-b-2 border-x-2; }
 
   /* ── Formularios de cuenta (registro, entrar, cuenta) ─── */
+  .auth-title {
+    @apply font-display font-black italic uppercase leading-[0.95] text-[2.4rem] sm:text-[2.75rem];
+  }
+  .auth-lead {
+    @apply mt-3 text-white/60 leading-relaxed;
+  }
   .auth-label {
-    @apply block font-display font-bold uppercase tracking-[0.2em] text-[0.72rem] text-night/55 mb-2;
+    @apply block text-sm font-medium text-white/75 mb-2;
   }
   .auth-field {
-    @apply w-full px-4 py-3.5 rounded-2xl bg-white border-2 border-transparent text-night placeholder-night/35
-           transition-colors focus:outline-none focus:border-indigo disabled:opacity-60;
+    @apply w-full h-[52px] px-4 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-white/30
+           transition-[border-color,box-shadow,background-color] duration-200
+           hover:border-white/25 focus:outline-none focus:border-aqua focus:bg-white/[0.06] focus:ring-4 focus:ring-aqua/15
+           disabled:opacity-60;
+  }
+  /* Autocompletado del navegador sin el fondo amarillo/blanco */
+  .auth-field:-webkit-autofill {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0 100px #1a1640 inset;
+    caret-color: #fff;
+  }
+  .auth-code {
+    @apply text-center font-mono text-[1.9rem] tracking-[0.55em] pl-[calc(1rem+0.55em)] h-16;
   }
   .auth-error {
-    @apply flex items-start gap-2 rounded-2xl bg-[#FF4F6D]/10 text-[#C4223F] px-4 py-3 text-sm;
+    @apply flex items-start gap-2.5 rounded-xl border border-scarlet/30 bg-scarlet/10 text-[#FF9AAC] px-4 py-3 text-sm leading-snug;
+  }
+  .auth-info {
+    @apply flex items-start gap-2.5 rounded-xl border border-aqua/25 bg-aqua/10 text-aqua2 px-4 py-3 text-sm leading-snug;
+  }
+  .auth-back {
+    @apply inline-flex items-center gap-2 mb-6 text-sm text-white/55 transition-colors hover:text-white
+           focus:outline-none focus-visible:text-white focus-visible:underline;
+  }
+  .btn-base:disabled {
+    @apply opacity-60 cursor-not-allowed;
+    transform: none;
   }
   .auth-link {
-    @apply font-display font-bold uppercase tracking-[0.12em] text-sm text-indigo underline-offset-4 hover:underline;
+    @apply font-medium text-sm text-aqua underline-offset-4 decoration-aqua/50 hover:underline
+           focus:outline-none focus-visible:underline;
   }
 
   /* ── Card base ─── */
