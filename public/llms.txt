@@ -16,6 +16,7 @@
 - [Jugar ahora](https://www.neotcg.cl/play): abre el simulador en el navegador
 - [Descargar](https://www.neotcg.cl/descargar): instaladores para Windows, Mac, Linux y Android
 - [Cartas](https://www.neotcg.cl/cartas): archivo de cartas con PS, ataques, debilidades y resistencias
+- [Ranking](https://www.neotcg.cl/ranking): top 10 por ELO y cartas más jugadas, en vivo
 - [Noticias](https://www.neotcg.cl/blog): expansiones nuevas y actualizaciones
 - [Donar](https://www.neotcg.cl/donar): cómo apoyar el proyecto
 - [Contacto](https://www.neotcg.cl/contacto): soporte y sugerencias (contacto@neotcg.cl)

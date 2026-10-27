@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 const links = [
   { label: "Inicio", to: "/" },
   { label: "Cartas", to: "/cartas" },
+  { label: "Ranking", to: "/ranking" },
   { label: "Noticias", to: "/blog" },
   { label: "Descargar", to: "/descargar" },
 ];

@@ -13,6 +13,7 @@ const cols = [
     links: [
       { label: 'Jugar en web', to: '/play' },
       { label: 'Cartas',       to: '/cartas' },
+      { label: 'Ranking',      to: '/ranking' },
       { label: 'Descargar',    to: '/descargar' },
       { label: 'Noticias',     to: '/blog' },
     ],
