@@ -429,7 +429,7 @@ const logout = () => {
                   v-model="adminData.downloads.version"
                   type="text"
                   class="w-full px-4 py-3 bg-ink/50 border border-white/10 rounded-lg text-white placeholder-muted focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all"
-                  placeholder="v0.11.1 Alpha ~250 MB"
+                  placeholder="Beta 1.6"
                 />
               </div>
 

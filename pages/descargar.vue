@@ -44,9 +44,9 @@ const platforms = computed(() => {
       "https://www.mediafire.com/file/5orodrm1ey10oeb/NeoCaohTCG-windows-Alpha_-_v0.10.0..zip/file",
     mac: "",
     linux: "",
-    version: "v0.10.0 Alpha",
+    version: SITE.version,
   };
-  const version = links.version || "v0.11.1 Alpha";
+  const version = links.version || SITE.version;
 
   return [
     {
@@ -249,13 +249,13 @@ useGsap((mm) => {
           >
             <span class="flex items-center gap-2 skew-x-12">
               <span class="w-2 h-2 rounded-full bg-aqua animate-pulse" />
-              Versión Alpha · {{ platforms[1].version }}
+              {{ platforms[1].version }}
             </span>
           </p>
 
           <p class="ix-fade mt-6 max-w-[460px] text-white/75 leading-relaxed">
-            Es una versión temprana: puede haber bugs o funciones incompletas.
-            Tu feedback en Discord nos ayuda a mejorarla.
+            Ya salimos de la Alpha: la Beta es estable y seguimos sumando
+            cartas y funciones. Tu feedback en Discord nos ayuda a mejorarla.
           </p>
 
           <div class="ix-fade flex flex-wrap items-center gap-3 mt-9">

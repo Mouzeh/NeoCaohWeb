@@ -46,6 +46,20 @@ const channels = [
     color: "bg-[#25D366]",
   },
   {
+    icon: "instagram" as const,
+    name: "Instagram",
+    detail: "@neotcg.cl",
+    href: SITE.instagram,
+    color: "bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF]",
+  },
+  {
+    icon: "facebook" as const,
+    name: "Facebook",
+    detail: "Noticias y anuncios",
+    href: SITE.facebook,
+    color: "bg-[#1877F2]",
+  },
+  {
     icon: "mail" as const,
     name: "Email",
     detail: SITE.email,
@@ -56,8 +70,8 @@ const channels = [
 
 const faqs = [
   {
-    q: "¿Cuándo estará lista la versión final?",
-    a: "Estamos trabajando en la versión Beta para mediados de 2026.",
+    q: "¿En qué versión está NeoCaoh?",
+    a: "Ya estamos en la Beta 1.6: el juego es estable y seguimos sumando cartas y funciones. Si encuentras un error, avísanos en Discord.",
   },
   {
     q: "¿Puedo contribuir al proyecto?",

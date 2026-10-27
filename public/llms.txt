@@ -3,6 +3,7 @@
 > NeoCaoh es un simulador gratuito de Pokémon TCG (juego de cartas coleccionables) hecho por y para la comunidad hispana. Permite armar mazos con las expansiones clásicas de la era Neo y jugar partidas online contra otros entrenadores, en español.
 
 - Idioma: español (comunidad hispana, con base en Chile)
+- Versión: Beta 1.6
 - Precio: gratis
 - Plataformas: navegador web, Windows, macOS, Linux y Android
 - Expansiones: era Neo (Neo Genesis, Neo Discovery, Neo Revelation, Neo Destiny) y Legendary Collection; más de 220 cartas
@@ -21,8 +22,9 @@
 
 ## Comunidad
 
-- [Discord](https://discord.gg/BNpF4XQEkX)
-- [Facebook](https://www.facebook.com/profile.php?id=61586292251689)
+- [Discord](https://discord.gg/qBnqYsGht)
+- [Instagram](https://www.instagram.com/neotcg.cl/)
+- [Facebook](https://www.facebook.com/p/Neo-Caoh-61586292251689/)
 
 ## Legal
 

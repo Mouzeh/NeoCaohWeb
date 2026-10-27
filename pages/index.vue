@@ -24,7 +24,7 @@ useHead({
             url: `${SITE.url}/`,
             logo: `${SITE.url}/icon-512.png`,
             email: SITE.email,
-            sameAs: [SITE.facebook, SITE.discord],
+            sameAs: [SITE.instagram, SITE.facebook, SITE.discord],
           },
           {
             "@type": "VideoGame",

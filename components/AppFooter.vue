@@ -20,7 +20,8 @@ const cols = [
   {
     head: 'Comunidad',
     links: [
-      { label: 'Facebook',  to: 'https://www.facebook.com/profile.php?id=61586292251689', external: true },
+      { label: 'Instagram', to: SITE.instagram, external: true },
+      { label: 'Facebook',  to: SITE.facebook, external: true },
       { label: 'Discord',   to: SITE.discord, external: true },
       { label: 'WhatsApp',  to: SITE.whatsapp, external: true },
     ],
