@@ -2,7 +2,7 @@ import { serverQueryContent } from "#content/server";
 import { SITE } from "~/data/site";
 
 // Páginas fijas + posts del blog (se actualiza solo al publicar en content/blog)
-const STATIC_PAGES = ["/", "/descargar", "/cartas", "/blog", "/donar", "/contacto", "/terminos", "/cookies"];
+const STATIC_PAGES = ["/", "/descargar", "/cartas", "/blog", "/registro", "/donar", "/contacto", "/terminos", "/cookies"];
 
 export default defineEventHandler(async (event) => {
   const posts = await serverQueryContent(event, "blog").only(["_path", "date"]).find();

@@ -78,6 +78,8 @@ export default defineNuxtConfig({
 
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
+      // Servidor del juego: las cuentas de la web y del juego son las mismas
+      gameApi: process.env.NUXT_PUBLIC_GAME_API || "https://caoh-tcg.fly.dev",
     },
   },
 

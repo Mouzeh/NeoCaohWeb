@@ -10,6 +10,7 @@ const links = [
 ];
 
 const route = useRoute();
+const { player } = useAccount();
 const navRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
 const pillRef = ref<HTMLElement | null>(null);
@@ -177,6 +178,13 @@ watch(menuOpen, (open) => {
           Donar
         </NuxtLink>
         <NuxtLink
+          :to="player ? '/cuenta' : '/entrar'"
+          class="hidden md:inline-flex items-center h-10 px-4 max-w-[160px] rounded-full border border-white/15 text-white font-display font-bold text-[0.9rem] tracking-[0.1em] uppercase no-underline transition-colors hover:border-aqua hover:text-aqua"
+          :class="isActive('/cuenta') || isActive('/entrar') || isActive('/registro') ? '!border-aqua !text-aqua' : ''"
+        >
+          <span class="truncate">{{ player ? player.username : "Entrar" }}</span>
+        </NuxtLink>
+        <NuxtLink
           to="/play"
           class="hidden sm:inline-flex items-center gap-2 h-10 px-5 rounded-full bg-aqua text-night font-display font-extrabold text-[0.9rem] tracking-[0.1em] uppercase no-underline transition-colors hover:bg-white"
         >
@@ -225,6 +233,9 @@ watch(menuOpen, (open) => {
       </li>
     </ul>
     <div class="relative grid grid-cols-2 gap-3">
+      <NuxtLink :to="player ? '/cuenta' : '/entrar'" class="btn-outline w-full col-span-2">
+        <span class="truncate">{{ player ? `Mi cuenta · ${player.username}` : "Entrar / Crear cuenta" }}</span>
+      </NuxtLink>
       <NuxtLink to="/donar" class="btn-outline w-full"><AppIcon name="heart" class="w-4 h-4" /> Donar</NuxtLink>
       <NuxtLink to="/play" class="btn-primary w-full"><AppIcon name="play" class="w-4 h-4" /> Jugar</NuxtLink>
     </div>

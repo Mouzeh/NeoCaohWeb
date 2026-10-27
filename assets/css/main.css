@@ -132,6 +132,21 @@ body {
   .bracket-num::before { @apply top-0 border-t-2 border-x-2; }
   .bracket-num::after  { @apply bottom-0 border-b-2 border-x-2; }
 
+  /* ── Formularios de cuenta (registro, entrar, cuenta) ─── */
+  .auth-label {
+    @apply block font-display font-bold uppercase tracking-[0.2em] text-[0.72rem] text-night/55 mb-2;
+  }
+  .auth-field {
+    @apply w-full px-4 py-3.5 rounded-2xl bg-white border-2 border-transparent text-night placeholder-night/35
+           transition-colors focus:outline-none focus:border-indigo disabled:opacity-60;
+  }
+  .auth-error {
+    @apply flex items-start gap-2 rounded-2xl bg-[#FF4F6D]/10 text-[#C4223F] px-4 py-3 text-sm;
+  }
+  .auth-link {
+    @apply font-display font-bold uppercase tracking-[0.12em] text-sm text-indigo underline-offset-4 hover:underline;
+  }
+
   /* ── Card base ─── */
   .card-base {
     @apply bg-panel rounded-2xl border border-white/5
