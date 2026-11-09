@@ -69,6 +69,7 @@ export const TYPE_META: Record<string, { label: string; icon: string; color: str
 };
 
 export const TIER_COLOR: Record<string, string> = {
+  SS: "#FF3FD2",
   S: "#FF4F6D",
   A: "#FFB547",
   B: "#5FE3D2",
@@ -152,7 +153,7 @@ export function useCommunityDecks() {
   };
 
   return {
-    list: (q: { sort?: string; type?: string; q?: string; author?: string; card?: string; page?: number }) =>
+    list: (q: { sort?: string; type?: string; tier?: string; q?: string; author?: string; card?: string; page?: number }) =>
       req<{ decks: DeckSummary[]; total: number; page: number; page_size: number }>("", { query: q, auth: false }),
     mine: () => req<{ decks: DeckSummary[] }>("/mine"),
     liked: () => req<{ decks: DeckSummary[] }>("/liked"),

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CardInfo, DeckSummary } from "~/composables/useCommunityDecks";
-import { TYPE_META, loadCatalog } from "~/composables/useCommunityDecks";
+import { TIER_COLOR, TYPE_META, loadCatalog } from "~/composables/useCommunityDecks";
 
 usePageSeo({
   title: "Mazos de la comunidad — NeoCaoh",
@@ -29,6 +29,8 @@ const VIEWS = [
 const view = computed(() => String(route.query.ver || "all"));
 const sort = computed(() => String(route.query.orden || "top"));
 const type = computed(() => String(route.query.tipo || ""));
+const tier = computed(() => String(route.query.tier || "").toUpperCase());
+const TIERS = ["SS", "S", "A", "B", "C"];
 const page = computed(() => Math.max(1, Number(route.query.p) || 1));
 const search = ref(String(route.query.q || ""));
 
@@ -70,6 +72,7 @@ async function load() {
       const r = await decksApi.list({
         sort: sort.value,
         type: type.value || undefined,
+        tier: tier.value || undefined,
         q: String(route.query.q || "") || undefined,
         page: page.value,
       });
@@ -159,6 +162,29 @@ watch(
               </button>
             </div>
           </div>
+          <div class="flex flex-wrap items-center gap-2" aria-label="Filtrar por tier">
+            <span class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-white/45 mr-1">Tier</span>
+            <button
+              type="button"
+              class="h-10 px-3.5 rounded-full text-sm transition-colors"
+              :class="!tier ? 'bg-white text-night font-medium' : 'bg-white/[0.05] text-white/65 hover:text-white'"
+              @click="setQuery({ tier: undefined })"
+            >
+              Todos
+            </button>
+            <button
+              v-for="t in TIERS"
+              :key="t"
+              type="button"
+              :aria-pressed="tier === t"
+              class="h-10 min-w-12 px-3 rounded-full font-display font-black italic text-lg transition-[transform,opacity] hover:scale-105"
+              :class="tier === t ? 'text-night ring-2 ring-white' : 'text-night opacity-55 hover:opacity-90'"
+              :style="{ background: TIER_COLOR[t] }"
+              @click="setQuery({ tier: tier === t ? undefined : t })"
+            >
+              {{ t }}
+            </button>
+          </div>
           <div class="flex flex-wrap gap-2" aria-label="Filtrar por tipo">
             <button
               type="button"
@@ -201,7 +227,7 @@ watch(
                 ? "Aún no publicas mazos"
                 : view === "liked"
                   ? "Sin favoritos todavía"
-                  : route.query.q || type
+                  : route.query.q || type || tier
                     ? "No hay mazos con ese filtro"
                     : "Sé el primero en publicar"
             }}
