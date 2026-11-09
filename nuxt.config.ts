@@ -99,6 +99,16 @@ export default defineNuxtConfig({
     },
   },
 
+  // Caché de archivos estáticos (Vercel los servía con max-age=0: el navegador
+  // revalidaba cada imagen en cada visita). Si cambias una imagen, cámbiale el nombre.
+  routeRules: {
+    "/frames/**": { headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=604800" } },
+    "/imagenes del juego/**": { headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=604800" } },
+    "/icons/**": { headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=604800" } },
+    // El catálogo cambia al correr `npm run subir-cartas`: poco tiempo + revalidar en segundo plano
+    "/data/**": { headers: { "cache-control": "public, max-age=3600, stale-while-revalidate=86400" } },
+  },
+
   // Fecha de compatibilidad
   compatibilityDate: "2024-11-01",
 });

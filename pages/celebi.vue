@@ -245,7 +245,7 @@ const logout = () => {
               class="w-20 h-20 bg-gradient-to-br from-lime/20 to-green/20 rounded-full flex items-center justify-center mx-auto mb-4 p-3"
             >
               <img
-                src="/icons/celebi.png"
+                src="/icons/celebi.webp"
                 alt="Celebi"
                 class="w-full h-full object-contain"
               />
@@ -319,7 +319,7 @@ const logout = () => {
               class="w-8 h-8 bg-gradient-to-br from-lime/20 to-green/20 rounded-full flex items-center justify-center p-1"
             >
               <img
-                src="/icons/celebi.png"
+                src="/icons/celebi.webp"
                 alt="Celebi"
                 class="w-full h-full object-contain"
               />

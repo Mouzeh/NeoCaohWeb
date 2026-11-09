@@ -277,12 +277,12 @@ useGsap((mm) => {
         <!-- Capturas -->
         <div class="relative h-[300px] sm:h-[420px] lg:h-[520px]" aria-hidden="true">
           <img
-            src="/imagenes del juego/mesas.png"
+            src="/imagenes del juego/mesas.webp"
             alt=""
             class="ix-hide dl-shot dl-shot-a absolute right-0 top-0 w-[88%] rounded-[22px] border-4 border-night shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] rotate-[3deg]"
           />
           <img
-            src="/imagenes del juego/creacion de deck.png"
+            src="/imagenes del juego/creacion de deck.webp"
             alt=""
             class="ix-hide dl-shot dl-shot-b absolute left-0 bottom-0 w-[70%] rounded-[18px] border-4 border-aqua shadow-[0_40px_80px_-30px_rgba(16,13,38,0.8)] -rotate-[4deg]"
           />

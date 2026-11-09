@@ -48,6 +48,8 @@ watch(search, (v) => {
 });
 
 const catalog = ref<Record<string, CardInfo> | null>(null);
+// Las imágenes llevan ?v= del catálogo: no pintarlas antes o se bajan dos veces
+const catalogReady = ref(false);
 const decks = ref<DeckSummary[]>([]);
 const total = ref(0);
 const pageSize = ref(24);
@@ -90,7 +92,10 @@ async function load() {
 const pages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)));
 
 onMounted(() => {
-  loadCatalog().then((c) => (catalog.value = c)).catch(() => {});
+  loadCatalog()
+    .then((c) => (catalog.value = c))
+    .catch(() => {})
+    .finally(() => (catalogReady.value = true));
 });
 watch(
   () => [route.query, account.ready.value, account.player.value?.id],
@@ -215,7 +220,7 @@ watch(
         </p>
 
         <!-- Lista -->
-        <div v-if="loading" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true">
+        <div v-if="loading || !catalogReady" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true">
           <div v-for="i in 8" :key="i" class="h-[300px] rounded-[24px] bg-panel animate-pulse" />
         </div>
 

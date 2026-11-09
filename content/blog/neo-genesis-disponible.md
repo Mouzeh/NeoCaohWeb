@@ -3,7 +3,7 @@ title: "Neo Genesis ya está acá! Nueva expansión"
 description: "La expansión Neo Genesis está disponible con todos sus sobres y mazos temáticos Lava y Turmoil."
 date: "2026-03-13"
 tag: "Expansión"
-image: "/frames/Sobres/SobreFuego.png"
+image: "/frames/Sobres/SobreFuego.webp"
 ---
 
 ¡La expansión más esperada finalmente llegó a NeoCaoh! **Neo Genesis** ya está disponible para todos los jugadores.
@@ -18,15 +18,15 @@ Puedes encontrar cartas de Neo Genesis en estos sobres:
 
 <div class="post-gallery">
   <figure>
-    <img src="/frames/Sobres/SobreFuego.png" alt="Sobre Fuego">
+    <img src="/frames/Sobres/SobreFuego.webp" alt="Sobre Fuego">
     <figcaption><strong>Sobre Fuego</strong>Con arte de Typhlosion</figcaption>
   </figure>
   <figure>
-    <img src="/frames/Sobres/SobreAgua.png" alt="Sobre Agua">
+    <img src="/frames/Sobres/SobreAgua.webp" alt="Sobre Agua">
     <figcaption><strong>Sobre Agua</strong>Con arte de Feraligatr</figcaption>
   </figure>
   <figure>
-    <img src="/frames/Sobres/SobreHierba.png" alt="Sobre Hierba">
+    <img src="/frames/Sobres/SobreHierba.webp" alt="Sobre Hierba">
     <figcaption><strong>Sobre Hierba</strong>Con arte de Meganium</figcaption>
   </figure>
 </div>
@@ -37,11 +37,11 @@ Además, están disponibles los dos mazos temáticos oficiales:
 
 <div class="post-gallery">
   <figure>
-    <img src="/frames/Sobres/Lava.jpg" alt="Mazo Lava">
+    <img src="/frames/Sobres/Lava.webp" alt="Mazo Lava">
     <figcaption><strong>Mazo Lava</strong>Estrategia basada en tipos Fuego y Lucha</figcaption>
   </figure>
   <figure>
-    <img src="/frames/Sobres/Turmoil.jpg" alt="Mazo Turmoil">
+    <img src="/frames/Sobres/Turmoil.webp" alt="Mazo Turmoil">
     <figcaption><strong>Mazo Turmoil</strong>Combinación de tipos Eléctrico y Psíquico</figcaption>
   </figure>
 </div>

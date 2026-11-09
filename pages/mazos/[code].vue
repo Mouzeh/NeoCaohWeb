@@ -9,6 +9,7 @@ const decksApi = useCommunityDecks();
 const code = computed(() => String(route.params.code).toUpperCase());
 
 const catalog = ref<Record<string, CardInfo> | null>(null);
+const catalogReady = ref(false);
 const deck = ref<DeckDetail | null>(null);
 const reviews = ref<DeckReview[]>([]);
 const me = ref<DeckMe | null>(null);
@@ -41,7 +42,12 @@ async function load() {
   }
 }
 
-onMounted(() => loadCatalog().then((c) => (catalog.value = c)).catch(() => {}));
+onMounted(() =>
+  loadCatalog()
+    .then((c) => (catalog.value = c))
+    .catch(() => {})
+    .finally(() => (catalogReady.value = true)),
+);
 watch(
   () => [account.ready.value, account.player.value?.id],
   () => {
@@ -50,7 +56,7 @@ watch(
   { immediate: true },
 );
 
-const groups = computed(() => (deck.value ? groupDeck(catalog.value, deck.value.cards) : []));
+const groups = computed(() => (deck.value && catalogReady.value ? groupDeck(catalog.value, deck.value.cards) : []));
 const view = ref<"grid" | "list">("grid");
 const zoom = ref<CardInfo | null>(null);
 const loginLink = computed(() => `/entrar?volver=${encodeURIComponent(route.fullPath)}`);

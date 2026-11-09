@@ -76,9 +76,9 @@ function submitReset() {
     :title="['Entra a tu', 'cuenta']"
     description="Usa el mismo nombre de entrenador y contraseña que en el juego."
     :cards="[
-      '/frames/cartas/ampharos-neo-genesis-es-1.jpg',
-      '/frames/cartas/typhlosion-neo-genesis-es-18.jpg',
-      '/frames/cartas/feraligatr-neo-genesis-es-4.jpg',
+      '/frames/cartas/ampharos-neo-genesis-es-1.webp',
+      '/frames/cartas/typhlosion-neo-genesis-es-18.webp',
+      '/frames/cartas/feraligatr-neo-genesis-es-4.webp',
     ]"
   >
     <!-- Login -->

@@ -3,13 +3,13 @@ title: "NeoCaoh ya está disponible en Android"
 description: "Lleva tus mazos en el bolsillo: el simulador llega a teléfonos y tablets Android con la misma experiencia que en PC."
 date: "2026-10-24"
 tag: "Update"
-image: "/imagenes del juego/mesas.png"
+image: "/imagenes del juego/mesas.webp"
 ---
 
 ¡Llegó el momento! **NeoCaoh ya se puede jugar en Android.** Ahora puedes entrar a las mesas, armar mazos y retar a otros entrenadores desde tu teléfono o tablet.
 
 <figure class="post-figure">
-  <img src="/imagenes del juego/mesas.png" alt="Mesas de juego de NeoCaoh">
+  <img src="/imagenes del juego/mesas.webp" alt="Mesas de juego de NeoCaoh">
   <figcaption>Las mesas de juego, ahora también en tu móvil.</figcaption>
 </figure>
 

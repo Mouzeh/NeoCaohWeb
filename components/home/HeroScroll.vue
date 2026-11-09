@@ -13,7 +13,7 @@ const { canvasRef, init } = useScrollFrames({
   videoWidth: 1280,
   videoHeight: 720,
   scrollContainer,
-  framePath: (n) => `/frames/png/frame_${n}.png`,
+  framePath: (n) => `/frames/png/frame_${n}.webp`,
   onReady: () => {
     canvasVisible.value = true;
   },

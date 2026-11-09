@@ -85,9 +85,9 @@ function resend() {
     :title="['Crea tu', 'cuenta']"
     description="Gratis, con mazo inicial incluido. Si ya juegas, entra con tu usuario de siempre."
     :cards="[
-      '/frames/cartas/chikorita-neo-genesis-es-53.jpg',
-      '/frames/cartas/cyndaquil-neo-genesis-es-56.jpg',
-      '/frames/cartas/croconaw-neo-genesis-es-31.jpg',
+      '/frames/cartas/chikorita-neo-genesis-es-53.webp',
+      '/frames/cartas/cyndaquil-neo-genesis-es-56.webp',
+      '/frames/cartas/croconaw-neo-genesis-es-31.webp',
     ]"
   >
     <!-- Progreso -->

@@ -4,37 +4,37 @@ import gsap from "gsap";
 const features = [
   {
     n: "01",
-    image: "/imagenes del juego/mesas.png",
+    image: "/imagenes del juego/mesas.webp",
     title: "Partidas en tiempo real",
     desc: "Motor fiel a las reglas oficiales. Juega contra rivales de todo el mundo con detección automática de errores y árbitro digital.",
   },
   {
     n: "02",
-    image: "/imagenes del juego/creacion de deck.png",
+    image: "/imagenes del juego/creacion de deck.webp",
     title: "Constructor de mazos",
     desc: "Editor visual con más de 220 cartas. Valida tu mazo al instante con filtros avanzados.",
   },
   {
     n: "03",
-    image: "/imagenes del juego/Ranking.png",
+    image: "/imagenes del juego/Ranking.webp",
     title: "Rankings globales",
     desc: "Clasificación competitiva. Sube de rango enfrentando a los mejores jugadores de la comunidad hispana.",
   },
   {
     n: "04",
-    image: "/imagenes del juego/Deck Activo.png",
+    image: "/imagenes del juego/Deck Activo.webp",
     title: "Gestión de mazos",
     desc: "Organiza tus mazos activos, guarda configuraciones y accede rápido a tus estrategias favoritas.",
   },
   {
     n: "05",
-    image: "/imagenes del juego/Gym.png",
+    image: "/imagenes del juego/Gym.webp",
     title: "Líderes de gimnasio",
     desc: "Batallas de gimnasio contra jugadores reales. Gana medallas y desbloquea recompensas exclusivas.",
   },
   {
     n: "06",
-    image: "/imagenes del juego/GTS.png",
+    image: "/imagenes del juego/GTS.webp",
     title: "Intercambio global",
     desc: "Intercambio seguro. Comparte cartas con la comunidad y completa tu colección.",
   },

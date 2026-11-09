@@ -41,13 +41,13 @@ export const energyMeta: Record<
   EnergyType,
   { label: string; icon: string; color: string }
 > = {
-  fire: { label: "Fuego", icon: "/frames/tipos/fire.png", color: "#FF7A45" },
-  water: { label: "Agua", icon: "/frames/tipos/water.png", color: "#4DA8FF" },
-  grass: { label: "Planta", icon: "/frames/tipos/grass.png", color: "#5FD77A" },
-  lightning: { label: "Eléctrico", icon: "/frames/tipos/electric.png", color: "#FFD43B" },
-  psychic: { label: "Psíquico", icon: "/frames/tipos/psy.png", color: "#C77DFF" },
-  fighting: { label: "Lucha", icon: "/frames/tipos/figth.png", color: "#E0894A" },
-  colorless: { label: "Incolora", icon: "/frames/tipos/incolor.png", color: "#D9D6E8" },
+  fire: { label: "Fuego", icon: "/frames/tipos/fire.webp", color: "#FF7A45" },
+  water: { label: "Agua", icon: "/frames/tipos/water.webp", color: "#4DA8FF" },
+  grass: { label: "Planta", icon: "/frames/tipos/grass.webp", color: "#5FD77A" },
+  lightning: { label: "Eléctrico", icon: "/frames/tipos/electric.webp", color: "#FFD43B" },
+  psychic: { label: "Psíquico", icon: "/frames/tipos/psy.webp", color: "#C77DFF" },
+  fighting: { label: "Lucha", icon: "/frames/tipos/figth.webp", color: "#E0894A" },
+  colorless: { label: "Incolora", icon: "/frames/tipos/incolor.webp", color: "#D9D6E8" },
 };
 
 const NEO_GENESIS = "Neo Genesis";
@@ -84,7 +84,7 @@ export const cards: Card[] = [
     ],
     weakness: "water",
     retreat: 2,
-    image: img("typhlosion-neo-genesis-es-18.jpg"),
+    image: img("typhlosion-neo-genesis-es-18.webp"),
   },
   {
     slug: "feraligatr",
@@ -116,7 +116,7 @@ export const cards: Card[] = [
     ],
     weakness: "grass",
     retreat: 3,
-    image: img("feraligatr-neo-genesis-es-4.jpg"),
+    image: img("feraligatr-neo-genesis-es-4.webp"),
   },
   {
     slug: "ampharos",
@@ -144,7 +144,7 @@ export const cards: Card[] = [
     ],
     weakness: "fighting",
     retreat: 2,
-    image: img("ampharos-neo-genesis-es-1.jpg"),
+    image: img("ampharos-neo-genesis-es-1.webp"),
   },
   {
     slug: "bellossom",
@@ -177,7 +177,7 @@ export const cards: Card[] = [
     ],
     weakness: "fire",
     retreat: 2,
-    image: img("bellossom-neo-genesis-es-3.jpg"),
+    image: img("bellossom-neo-genesis-es-3.webp"),
   },
   {
     slug: "azumarill",
@@ -206,7 +206,7 @@ export const cards: Card[] = [
     ],
     weakness: "lightning",
     retreat: 1,
-    image: img("azumarill-neo-genesis-es-2.jpg"),
+    image: img("azumarill-neo-genesis-es-2.webp"),
   },
   {
     slug: "donphan",
@@ -241,7 +241,7 @@ export const cards: Card[] = [
     weakness: "grass",
     resistance: { type: "lightning", value: "-30" },
     retreat: 3,
-    image: img("donphan-neo-genesis-es-21.jpg"),
+    image: img("donphan-neo-genesis-es-21.webp"),
   },
   {
     slug: "xatu",
@@ -275,7 +275,7 @@ export const cards: Card[] = [
     weakness: "psychic",
     resistance: { type: "fighting", value: "-30" },
     retreat: 1,
-    image: img("xatu-neo-genesis-es-52.jpg"),
+    image: img("xatu-neo-genesis-es-52.webp"),
   },
   {
     slug: "electabuzz",
@@ -303,7 +303,7 @@ export const cards: Card[] = [
     ],
     weakness: "fighting",
     retreat: 1,
-    image: img("electabuzz-neo-genesis-es-33.jpg"),
+    image: img("electabuzz-neo-genesis-es-33.webp"),
   },
   {
     slug: "gligar",
@@ -332,7 +332,7 @@ export const cards: Card[] = [
     weakness: "grass",
     resistance: { type: "fighting", value: "-30" },
     retreat: 0,
-    image: img("gligar-neo-genesis-es-59.jpg"),
+    image: img("gligar-neo-genesis-es-59.webp"),
   },
   {
     slug: "cyndaquil",
@@ -364,6 +364,6 @@ export const cards: Card[] = [
     ],
     weakness: "water",
     retreat: 1,
-    image: img("cyndaquil-neo-genesis-es-56.jpg"),
+    image: img("cyndaquil-neo-genesis-es-56.webp"),
   },
 ];

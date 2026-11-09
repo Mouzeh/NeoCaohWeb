@@ -3,7 +3,7 @@ title: "Legendary Collection ya está disponible!"
 description: "La icónica expansión Legendary Collection llega a NeoCaoh con sus cartas reimpresas y mazos de inicio."
 date: "2026-03-12"
 tag: "Expansión"
-image: "/frames/Sobres/legendary.png"
+image: "/frames/Sobres/legendary.webp"
 ---
 
 ¡Una expansión legendaria ha llegado a NeoCaoh! **Legendary Collection** está oficialmente disponible con todas sus cartas reimpresas y contenido especial.
@@ -17,7 +17,7 @@ Legendary Collection reúne las mejores cartas de las primeras expansiones con a
 Encuentra estas cartas especiales en los sobres de Legendary Collection, con su característico diseño dorado.
 
 <figure class="post-figure post-figure--small">
-  <img src="/frames/Sobres/legendary.png" alt="Sobre Legendary Collection">
+  <img src="/frames/Sobres/legendary.webp" alt="Sobre Legendary Collection">
   <figcaption>Diseño dorado exclusivo con cartas reimpresas.</figcaption>
 </figure>
 

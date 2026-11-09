@@ -57,15 +57,15 @@ const CARD_CDN = "https://play.neotcg.cl/cards";
 
 // Tipos del juego → ícono y nombre en la web
 export const TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
-  GRASS: { label: "Planta", icon: "/frames/tipos/grass.png", color: "#5FD77A" },
-  FIRE: { label: "Fuego", icon: "/frames/tipos/fire.png", color: "#FF7A45" },
-  WATER: { label: "Agua", icon: "/frames/tipos/water.png", color: "#4DA8FF" },
-  LIGHTNING: { label: "Eléctrico", icon: "/frames/tipos/electric.png", color: "#FFD43B" },
-  PSYCHIC: { label: "Psíquico", icon: "/frames/tipos/psy.png", color: "#C77DFF" },
-  FIGHTING: { label: "Lucha", icon: "/frames/tipos/figth.png", color: "#E0894A" },
-  DARKNESS: { label: "Oscuro", icon: "/frames/tipos/dark.png", color: "#8A7FA8" },
-  METAL: { label: "Metal", icon: "/frames/tipos/metal.png", color: "#B8C2D6" },
-  COLORLESS: { label: "Incoloro", icon: "/frames/tipos/incolor.png", color: "#D9D6E8" },
+  GRASS: { label: "Planta", icon: "/frames/tipos/grass.webp", color: "#5FD77A" },
+  FIRE: { label: "Fuego", icon: "/frames/tipos/fire.webp", color: "#FF7A45" },
+  WATER: { label: "Agua", icon: "/frames/tipos/water.webp", color: "#4DA8FF" },
+  LIGHTNING: { label: "Eléctrico", icon: "/frames/tipos/electric.webp", color: "#FFD43B" },
+  PSYCHIC: { label: "Psíquico", icon: "/frames/tipos/psy.webp", color: "#C77DFF" },
+  FIGHTING: { label: "Lucha", icon: "/frames/tipos/figth.webp", color: "#E0894A" },
+  DARKNESS: { label: "Oscuro", icon: "/frames/tipos/dark.webp", color: "#8A7FA8" },
+  METAL: { label: "Metal", icon: "/frames/tipos/metal.webp", color: "#B8C2D6" },
+  COLORLESS: { label: "Incoloro", icon: "/frames/tipos/incolor.webp", color: "#D9D6E8" },
 };
 
 export const TIER_COLOR: Record<string, string> = {

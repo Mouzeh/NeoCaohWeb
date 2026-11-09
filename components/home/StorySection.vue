@@ -145,7 +145,7 @@ useGsap((mm) => {
         <img
           v-for="(logo, i) in logos"
           :key="logo"
-          :src="`/frames/logos/${logo}.png`"
+          :src="`/frames/logos/${logo}.webp`"
           :alt="logo"
           class="story-logo absolute w-24 md:w-32 h-auto opacity-25 hidden md:block"
           :style="{

@@ -17,6 +17,7 @@ watchEffect(() => {
 });
 
 const catalog = ref<Record<string, CardInfo> | null>(null);
+const catalogReady = ref(false);
 const slots = ref<{ slot: number; name: string; cards: string[] }[]>([]);
 const loading = ref(true);
 const selected = ref<number | null>(null);
@@ -26,7 +27,12 @@ const busy = ref(false);
 const error = ref("");
 const existing = ref("");
 
-onMounted(() => loadCatalog().then((c) => (catalog.value = c)).catch(() => {}));
+onMounted(() =>
+  loadCatalog()
+    .then((c) => (catalog.value = c))
+    .catch(() => {})
+    .finally(() => (catalogReady.value = true)),
+);
 watch(
   () => account.player.value?.id,
   async (id) => {
@@ -46,6 +52,7 @@ watch(
 const current = computed(() => slots.value.find((s) => s.slot === selected.value) ?? null);
 const groups = computed(() => (current.value ? groupDeck(catalog.value, current.value.cards) : []));
 const preview = (cards: string[]) => {
+  if (!catalogReady.value) return [];
   const g = groupDeck(catalog.value, cards)[0];
   return g ? [...g.items].sort((a, b) => b.card.stage - a.card.stage || b.n - a.n).slice(0, 3).map((e) => e.card) : [];
 };

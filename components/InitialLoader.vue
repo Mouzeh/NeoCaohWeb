@@ -1,14 +1,14 @@
 <script setup lang="ts">
 const isVisible = ref(true)
 const cards = ref([
-  '/frames/cartas/wooper-neo-genesis-es-82.jpg',
-  '/frames/cartas/furret-neo-genesis-es-35.jpg',
-  '/frames/cartas/clefairy-neo-genesis-es-30.jpg',
-  '/frames/cartas/cyndaquil-neo-genesis-es-56.jpg',
-  '/frames/cartas/bellossom-neo-genesis-es-3.jpg',
-  '/frames/cartas/gligar-neo-genesis-es-59.jpg',
-  '/frames/cartas/ariados-neo-genesis-es-27.jpg',
-  '/frames/cartas/donphan-neo-genesis-es-21.jpg'
+  '/frames/cartas/wooper-neo-genesis-es-82.webp',
+  '/frames/cartas/furret-neo-genesis-es-35.webp',
+  '/frames/cartas/clefairy-neo-genesis-es-30.webp',
+  '/frames/cartas/cyndaquil-neo-genesis-es-56.webp',
+  '/frames/cartas/bellossom-neo-genesis-es-3.webp',
+  '/frames/cartas/gligar-neo-genesis-es-59.webp',
+  '/frames/cartas/ariados-neo-genesis-es-27.webp',
+  '/frames/cartas/donphan-neo-genesis-es-21.webp'
 ])
 
 const emit = defineEmits(['loaded'])
