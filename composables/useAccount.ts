@@ -14,7 +14,8 @@ export type Player = {
   bp_xp: number;
   role?: string;
   inventory?: Record<string, number>;
-  decks?: Record<string, { name: string; cards: string[] }>;
+  decks?: { slot: number; name: string; cards: string[] }[];
+  deck_slots?: number;
   medals?: unknown[];
 };
 
@@ -117,6 +118,9 @@ export function useAccount() {
     changePassword(currentPassword: string, newPassword: string) {
       return post("/change-password", { currentPassword, newPassword }, readToken());
     },
+
+    /** Token de la sesión (para las APIs que piden cuenta, p. ej. mazos). */
+    token: readToken,
 
     logout() {
       writeToken(null);

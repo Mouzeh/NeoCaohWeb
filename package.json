@@ -12,7 +12,8 @@
     "generate": "nuxt build && nuxt generate",
     "preview": "nuxt preview",
     "start": "node .output/server/index.mjs",
-    "subir-juego": "bash scripts/subir-juego.sh"
+    "subir-juego": "bash scripts/subir-juego.sh",
+    "subir-cartas": "node scripts/subir-cartas.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",

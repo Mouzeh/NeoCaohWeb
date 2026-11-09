@@ -6,6 +6,12 @@ usePageSeo({
 
 const account = useAccount();
 const router = useRouter();
+const route = useRoute();
+// ?volver=/mazos/NEO-XXXXX → tras entrar, de vuelta ahí (solo rutas internas)
+const back = computed(() => {
+  const v = String(route.query.volver || "");
+  return v.startsWith("/") && !v.startsWith("//") ? v : "/cuenta";
+});
 
 // login | forgot (pedir código) | reset (código + nueva contraseña)
 const step = ref<"login" | "forgot" | "reset">("login");
@@ -20,7 +26,7 @@ const loading = ref(false);
 
 // Con la sesión ya iniciada no tiene sentido esta página
 watchEffect(() => {
-  if (account.player.value && step.value === "login") router.replace("/cuenta");
+  if (account.player.value && step.value === "login") router.replace(back.value);
 });
 
 async function run(fn: () => Promise<unknown>) {

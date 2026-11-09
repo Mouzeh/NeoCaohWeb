@@ -25,7 +25,13 @@ defineProps<{
     | "globe"
     | "language"
     | "eye"
-    | "eye-off";
+    | "eye-off"
+    | "star"
+    | "trash"
+    | "search"
+    | "plus"
+    | "cards"
+    | "edit";
 }>();
 </script>
 
@@ -176,5 +182,22 @@ defineProps<{
       <path d="M9.9 5.2A9.6 9.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-2.6 3.5M6.3 6.3C3.6 8 2 12 2 12s3.6 7 10 7a9.5 9.5 0 0 0 5.7-1.8" />
       <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
     </template>
+    <path
+      v-else-if="name === 'star'"
+      d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"
+    />
+    <template v-else-if="name === 'trash'">
+      <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+    </template>
+    <template v-else-if="name === 'search'">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20.5 20.5 16 16" />
+    </template>
+    <path v-else-if="name === 'plus'" d="M12 5v14M5 12h14" />
+    <template v-else-if="name === 'cards'">
+      <rect x="7" y="3" width="12" height="16" rx="2" />
+      <path d="M4 7v12a2 2 0 0 0 2 2h9" />
+    </template>
+    <path v-else-if="name === 'edit'" d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
   </svg>
 </template>
