@@ -237,7 +237,7 @@ const fmtDate = (s: string) =>
               :key="t"
               class="inline-flex items-center gap-1.5 rounded-full bg-night/30 px-3 py-1 text-sm"
             >
-              <img :src="TYPE_META[t]?.icon" alt="" class="w-5 h-5" />{{ TYPE_META[t]?.label }}
+              <img decoding="async" :src="TYPE_META[t]?.icon" alt="" class="w-5 h-5" />{{ TYPE_META[t]?.label }}
             </span>
             <span v-if="deck.hidden" class="rounded-full bg-scarlet/80 px-3 py-1 text-sm">Oculto</span>
           </div>
@@ -368,7 +368,7 @@ const fmtDate = (s: string) =>
                   :aria-label="`${e.n} × ${e.card.name}`"
                   @click="zoom = e.card"
                 >
-                  <img
+                  <img decoding="async"
                     :src="e.card.img"
                     :alt="e.card.name"
                     loading="lazy"
@@ -389,7 +389,7 @@ const fmtDate = (s: string) =>
                 <li v-for="e in g.items" :key="e.card.id">
                   <button type="button" class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.03]" @click="zoom = e.card">
                     <span class="w-8 font-display font-black italic text-xl text-aqua">{{ e.n }}</span>
-                    <img v-if="TYPE_META[e.card.ptype] && e.card.type === 'POKEMON'" :src="TYPE_META[e.card.ptype].icon" alt="" class="w-5 h-5" />
+                    <img decoding="async" v-if="TYPE_META[e.card.ptype] && e.card.type === 'POKEMON'" :src="TYPE_META[e.card.ptype].icon" alt="" class="w-5 h-5" />
                     <span class="font-medium">{{ e.card.name }}</span>
                     <span class="ml-auto text-xs text-white/45 truncate">{{ e.card.set }}</span>
                   </button>
@@ -518,7 +518,7 @@ const fmtDate = (s: string) =>
           @click="zoom = null"
         >
           <figure class="text-center">
-            <img :src="zoom.img" :alt="zoom.name" class="w-[min(80vw,340px)] aspect-[63/88] rounded-[12px] shadow-2xl" />
+            <img decoding="async" :src="zoom.img" :alt="zoom.name" class="w-[min(80vw,340px)] aspect-[63/88] rounded-[12px] shadow-2xl" />
             <figcaption class="mt-4 font-display font-black italic uppercase text-2xl">{{ zoom.name }}</figcaption>
             <p class="text-sm text-white/55">{{ zoom.set }}</p>
           </figure>

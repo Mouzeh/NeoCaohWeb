@@ -18,7 +18,7 @@ const cover = computed(() => props.deck.cover.map((id) => cardOf(props.catalog, 
     <div class="relative h-44 bg-gradient-to-b from-indigo/40 to-transparent overflow-hidden">
       <span class="stripes absolute left-0 top-0 w-1/2 h-full text-white/[0.04]" aria-hidden="true" />
       <div class="absolute inset-x-0 bottom-[-38px] flex justify-center">
-        <img
+        <img decoding="async"
           v-for="(c, i) in cover"
           :key="c.id + i"
           :src="c.img"
@@ -46,7 +46,7 @@ const cover = computed(() => props.deck.cover.map((id) => cardOf(props.catalog, 
         >{{ deck.tier }}</span
       >
       <span class="absolute top-3 right-3 flex gap-1">
-        <img
+        <img decoding="async"
           v-for="t in deck.types"
           :key="t"
           :src="TYPE_META[t]?.icon"

@@ -113,7 +113,7 @@ async function publish() {
                 @click="pick(s)"
               >
                 <div class="flex -space-x-6 shrink-0">
-                  <img
+                  <img decoding="async"
                     v-for="c in preview(s.cards)"
                     :key="c.id"
                     :src="c.img"
