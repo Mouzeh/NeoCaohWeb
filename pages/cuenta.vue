@@ -85,6 +85,7 @@ function logout() {
 
           <div class="mt-8 flex flex-wrap gap-3">
             <NuxtLink to="/play" class="btn-primary"><AppIcon name="play" class="w-4 h-4" /> Jugar</NuxtLink>
+            <NuxtLink to="/canjear" class="btn-outline">Canjear código</NuxtLink>
             <button type="button" class="btn-outline" @click="logout">Cerrar sesión</button>
           </div>
         </div>
