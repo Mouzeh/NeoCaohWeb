@@ -1,11 +1,47 @@
 #!/bin/bash
-# Publica la exportación web de Godot en play.neotcg.cl (bucket R2 neotcg-game).
+# Exporta la versión web desde Godot (~/pokemon-tcg) y la publica en
+# play.neotcg.cl (bucket R2 neotcg-game).
 # Uso: npm run subir-juego
 set -e
 
 ORIGEN="/Users/mouzeh/Ejecutable TCG NEO/Web"
 DESTINO="$(cd "$(dirname "$0")/.." && pwd)/public/game"
 URL="https://play.neotcg.cl"
+PROYECTO="/Users/mouzeh/pokemon-tcg"
+GODOT="/Users/mouzeh/Downloads/Godot.app/Contents/MacOS/Godot"
+
+# Lo publicado debe corresponder a un commit: no se sube con cambios sin guardar
+# en el cliente (los archivos sueltos que no están en git no cuentan).
+# Para saltarse el chequeo: SIN_CHEQUEO=1 npm run subir-juego
+if [ -z "$SIN_CHEQUEO" ] && [ -n "$(git -C "$PROYECTO" status --porcelain --untracked-files=no)" ]; then
+  echo "⛔ El cliente tiene cambios sin commit:"
+  git -C "$PROYECTO" status --short --untracked-files=no
+  echo "   Haz commit (o usa SIN_CHEQUEO=1 npm run subir-juego) y vuelve a intentar."
+  exit 1
+fi
+
+if [ ! -x "$GODOT" ]; then
+  echo "⛔ No encuentro Godot en $GODOT (edita GODOT en este script)."
+  exit 1
+fi
+
+echo "🛠  Exportando versión web desde Godot ($(git -C "$PROYECTO" log -1 --format='%h %s'))..."
+EXPORT_LOG="$(mktemp)"
+MARCA="$(mktemp)"   # se crea antes de exportar: el .pck tiene que quedar más nuevo
+if ! "$GODOT" --headless --path "$PROYECTO" --export-release "Web" >"$EXPORT_LOG" 2>&1; then
+  tail -20 "$EXPORT_LOG"
+  echo "⛔ Falló la exportación de Godot (log completo: $EXPORT_LOG)."
+  exit 1
+fi
+# Godot puede terminar con código 0 aunque no exporte: se confirma que el .pck es nuevo
+if [ -z "$(find "$ORIGEN/NeoTcgMac.pck" -newer "$MARCA" 2>/dev/null)" ]; then
+  tail -20 "$EXPORT_LOG"
+  echo "⛔ La exportación no generó un NeoTcgMac.pck nuevo (log completo: $EXPORT_LOG)."
+  exit 1
+fi
+rm -f "$EXPORT_LOG" "$MARCA"
+echo "  ✓ Exportación lista"
+echo ""
 
 echo "📦 Copiando exportación desde $ORIGEN..."
 cp "$ORIGEN"/NeoTcgMac.* "$DESTINO"/
